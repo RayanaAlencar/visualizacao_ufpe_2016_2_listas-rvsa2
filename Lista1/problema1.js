@@ -6,6 +6,11 @@
 	}
 }
 
+//fazer um map para modificar valor das chaves
+function rename(arrayentrada){
+	var robj{};
+	rObjt[arrayentrada.key]
+}
 
 function maxSetosa (arrayentrada,coluna){
 	var onlySetosa = isSetosa(arrayentrada);
