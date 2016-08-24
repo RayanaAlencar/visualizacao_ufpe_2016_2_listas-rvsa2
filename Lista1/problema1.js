@@ -1,20 +1,28 @@
- function isSetosa (arrayentrada){
-	if(arrayentrada.Species === "setosa"){
-		return true;
-	}else {
-		return false;
+ function isSetosa (atributo){
+ 	return function(arrayentrada){
+ 	return (arrayentrada.Species === atributo);
+ }
+}
+function returnSetosa(arrayentrada,atributo){
+	return arrayentrada.filter(isSetosa(atributo));
+}
+
+function minn(atributo){
+		return function(pre,current,currentIndex,value){
+		if(pre[atributo]<current[atributo]){
+			return pre;
+		}else{
+			return current;
+		}
 	}
 }
 
-//fazer um map para modificar valor das chaves
-function rename(arrayentrada){
-	var robj{};
-	rObjt[arrayentrada.key]
+
+function getMinimum (arrayentrada,atributo,atributo2){
+	var onlySetosa = returnSetosa(arrayentrada,atributo);
+	//var aux = onlySetosa.map(function(a) {return a[atributo2];});
+	//console.log(aux, " tamanho de ",atributo, " eh ", onlySetosa.length);
+	var saida =  onlySetosa.reduce(minn(atributo2));
+	return saida[atributo2];
 }
 
-function maxSetosa (arrayentrada,coluna){
-	var onlySetosa = isSetosa(arrayentrada);
-	var maximo = ( pre, cur ) => Math.max( pre.x, cur.x );
-	var azul =  [ { x: 22 }, { x: 42 } ].reduce(maximo);
-	return azul;
-}

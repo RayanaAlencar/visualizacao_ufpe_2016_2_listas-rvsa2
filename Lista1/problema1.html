@@ -2,15 +2,15 @@
 <html>
 <head> 
 <script  src="http://www.cin.ufpe.br/~nivan/teaching/data_vis/fall_2016/material/iris.js"></script>
-<script  src="problema1.js"> </script>
+<script  src="C:/Users/Ray/visualizacao_ufpe_2016_2_listas-rvsa2/Lista1/problema1.js"> </script>
 </head>
 <body>
 <p id="qualquer"> 
 </p>
 <script>
-console.log(iris);
-var arraySetosa = iris.filter(isSetosa);
-console.log(arraySetosa);
+console.log(iris, " tamanho de iris eh ", iris.length);
+var x = getMinimum (iris,"setosa","Sepal.Length");
+console.log("menor valor eh ", x);
 </script>
 </body>
 </html>
