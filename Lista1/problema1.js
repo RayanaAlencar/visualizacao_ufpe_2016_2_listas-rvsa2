@@ -3,6 +3,17 @@
  	return (arrayentrada.Species === atributo);
  }
 }
+
+ function notSomeSpecies (atributos){
+ 	return function(arrayentrada){
+ 		if(atributos.indexOf(arrayentrada.Species) <0){
+ 			return true;
+ 		}else{
+ 			return false;
+ 		}
+ }
+}
+
  function isSomeSpecies (atributos){
  	return function(arrayentrada){
  		if(atributos.indexOf(arrayentrada.Species) <0){
@@ -21,6 +32,10 @@ function returnSpecies(arrayentrada,atributo){
 	return arrayentrada.filter(isSomeSpecies(atributo));
 }
 
+function returnNotSpecies(arrayentrada,atributo){
+	return arrayentrada.filter(notSomeSpecies(atributo));
+}
+
 function minn(atributo){
 		return function(pre,current,currentIndex,value){
 			if(pre[atributo]<current[atributo]){
@@ -30,6 +45,17 @@ function minn(atributo){
 			}
 		}
 }
+
+function max(atributo){
+		return function(pre,current,currentIndex,value){
+			if(pre[atributo]>current[atributo]){
+				return pre;
+			}else{
+				return current;
+			}
+		}
+}
+
 
 function average(atributo){
 		return function(pre,current,currentIndex,value){
@@ -57,5 +83,13 @@ function getAverage(arrayentrada,especies,coluna){
 	sumColunas = sumColunas[coluna];
 	var media = (sumColunas/onlyEspecies.length);
 	console.log("Para a coluna", coluna, " a media eh ",media);
+}
+
+function getMaximumNotIn(arrayentrada,especies,coluna){
+	var onlyNotEspecies = returnNotSpecies(arrayentrada,especies);
+	var saida =  onlyNotEspecies.reduce(max(coluna));
+	saida = saida[coluna];
+	console.log("O maximo valor do atributo ",coluna," das especies que nao sao ",especies, " eh ",saida);
+	return saida;
 }
 
