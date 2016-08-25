@@ -5,7 +5,6 @@
 }
  function isSomeSpecies (atributos){
  	return function(arrayentrada){
- 		console.log(atributos, " ")
  		if(atributos.indexOf(arrayentrada.Species) <0){
  			return false;
  		}else{
@@ -32,9 +31,12 @@ function minn(atributo){
 		}
 }
 
-function avarege(atributo){
+function average(atributo){
 		return function(pre,current,currentIndex,value){
-			return (pre[atributo]+current[atributo]);
+			var sum = pre[atributo]+current[atributo];
+			var aux = Object.create(pre);
+			aux[atributo]=sum;
+			return (aux);
 	}
 }
 
@@ -44,14 +46,16 @@ function getMinimum (arrayentrada,especie,coluna){
 	//var aux = onlySetosa.map(function(a) {return a[atributo2];});
 	//console.log(aux, " tamanho de ",atributo, " eh ", onlySetosa.length);
 	var saida =  onlyEspecie.reduce(minn(coluna));
-	return saida[coluna];
+	saida = saida[coluna];
+	console.log("O minimo valor do atributo ",coluna," da especie ",especie, " eh ",saida);
+	return saida;
 }
 
 function getAverage(arrayentrada,especies,coluna){
 	var onlyEspecies = returnSpecies(arrayentrada,especies);
-	console.log("retorno das especies foi " ,onlyEspecies, " tamanho desse array eh de ", onlyEspecies.length);
-	var media = onlyEspecies.reduce(function(a[coluna],b[coluna]){ return a[coluna]+b[coluna]});
-	console.log("para a coluna", coluna, " a media eh ",media);
-
+	var sumColunas = onlyEspecies.reduce(average(coluna));
+	sumColunas = sumColunas[coluna];
+	var media = (sumColunas/onlyEspecies.length);
+	console.log("Para a coluna", coluna, " a media eh ",media);
 }
 
