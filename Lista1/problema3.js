@@ -12,28 +12,21 @@ function returnAttValues(arrayentrada,atributo1,atributo2){
 	return arrayentrada.map(attValue(atributo1,atributo2));
 }
 
-function render(data,atributo1,atributo2,xmin,xmax,ymin,ymax) {
+function render(data,atributo1,atributo2) {
+	var svg = d3.select("body").select("svg");
+	var xScale = d3.scaleLinear().domain([0, d3.max(data, function(d) { return d[atributo1]; })]).range([20, 680]);
+	var yScale = d3.scaleLinear() .domain([0, d3.max(data, function(d) { return d[atributo2]; })]).range([680,20]);
 	console.log("aquiiii");
-	console.log(xmin," ",xmax);
-	var pontos = d3.select("body").select("svg").select("g").selectAll("circle").data(data);
+	var pontos = svg.selectAll("circle").data(data);
 	pontos.exit().remove();
-	pontos.enter().append("circle").attr("cx", function (d,xmin,xmax){
-												console.log(d," ",xmin,xmax);
-												 return (d[atributo2]-xmin/xmax-xmin);
-												 }
-										).attr("cy", function (ymin,ymax){
-												return function(d){ 
-												 return (d[atributo1]-ymin/ymax-ymin);
-												 }
-											}).attr("r",50).attr("sytle","fill:rgb(204,102,0);stroke:black;stroke-width:8");
+	console.log("criando o circulo");
+	pontos.enter().append("circle").attr("cx", function(d){return xScale(d[atributo1]);}).attr("cy", function(d){console.log("aqui1",yScale(d[atributo2]));return yScale(d[atributo2]);}).attr("r",5).attr("sytle","fill:rgb(204,102,0);stroke:black;stroke-width:8");
+	//var linhax = svg.axis()scale(xScale);
+	var xAxis = d3.axisTop(xScale).ticks(5);  //Set rough # of ticks
+	var aux = svg.append("g").call(xAxis);
 }
 
 
-function calcPosition(data,especie,atributo1){
-
-
-
-}
 function getMinimum (arrayentrada,coluna){
 	var saida =  arrayentrada.reduce(minn(coluna));
 	saida = saida[coluna];
@@ -80,13 +73,14 @@ function max(atributo){
 
 
 function main(arrayentrada,atributo1,atributo2){
+	var svg = d3.select("body").append("svg").attr("width", 700).attr("height", 700).attr("style","background-color:#bff;align").attr("align","center");
 	var att1 = returnAttValues(arrayentrada,atributo1,atributo2);
 	console.log("array um eh ",att1);
 	var xMaximo = getMax(att1,atributo2);
 	var xMin = getMinimum(att1,atributo2);
 	var yMaximo = getMax(att1,atributo1);
 	var yMin = getMinimum(att1,atributo1);
-	d3.select("body").select("svg").select("g").append("line").attr("x1",0).attr("y1",0).attr("x2",0).attr("y2",700).attr("style","fill:none;stroke:black;stroke-width:8");
-	d3.select("body").select("svg").select("g").append("line").attr("x1",0).attr("y1",0).attr("x2",700).attr("y2",0).attr("style","fill:none;stroke:black;stroke-width:8");
-	render(att1,atributo1,atributo2,xMin,xMaximo,yMin,yMaximo);
+	//d3.select("body").select("svg").select("g").append("line").attr("x1",0).attr("y1",0).attr("x2",0).attr("y2",700).attr("style","fill:none;stroke:black;stroke-width:8");
+	//d3.select("body").select("svg").select("g").append("line").attr("x1",0).attr("y1",0).attr("x2",700).attr("y2",0).attr("style","fill:none;stroke:black;stroke-width:8");
+	render(att1,atributo1,atributo2);
 }
