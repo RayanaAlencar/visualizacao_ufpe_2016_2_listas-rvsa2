@@ -73,7 +73,7 @@ function getMinimum (arrayentrada,especie,coluna){
 	//console.log(aux, " tamanho de ",atributo, " eh ", onlySetosa.length);
 	var saida =  onlyEspecie.reduce(minn(coluna));
 	saida = saida[coluna];
-	console.log("O minimo valor do atributo ",coluna," da especie ",especie, " eh ",saida);
+	console.log("O valor minimo do atributo ",coluna," da especie ",especie, " eh ",saida);
 	return saida;
 }
 
@@ -89,7 +89,7 @@ function getMaximumNotIn(arrayentrada,especies,coluna){
 	var onlyNotEspecies = returnNotSpecies(arrayentrada,especies);
 	var saida =  onlyNotEspecies.reduce(max(coluna));
 	saida = saida[coluna];
-	console.log("O maximo valor do atributo ",coluna," das especies que nao sao ",especies, " eh ",saida);
+	console.log("O valor maximo do atributo ",coluna," das especies que nao sao ",especies[0]," nem ",especies[1], " eh ",saida);
 	return saida;
 }
 
