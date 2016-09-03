@@ -4,41 +4,39 @@ var svg = d3
 .select("body")
 .append("svg")
 .attr("width", 900)
-.attr("height", 900)
+.attr("height", 500)
 .attr("style","background-color:#e6e6ff;align")
-.attr("align","center");
+.append("g")
+.attr("transform", "translate(" + 20+ "," + 10+ ")");
 
 var pie = svg
-.append("g")
-.attr('transform', 'translate(' + (700 / 2) +  ',' + (700 / 2) + ')')
 .append("circle")
-.attr("cx", 10)
-.attr("cy",10)
-.attr("r",150)
-.attr("style","fill:#ffdf80;stroke:#ffdf80;border-radius:0.5;stroke-width:300");
+.attr("cx", 450)
+.attr("cy",250)
+.attr("r",90)
+.attr("style","fill:#ffdf80;stroke:#ffdf80;border-radius:0.5;stroke-width:180");
 
 
 var circle1 = svg
 .append("g")
-.attr('transform', 'translate(' + (700 / 2) +  ',' + (700 / 2) + ')')
 .selectAll("circle")
 .data(probabilities)
 .enter()
 .append("circle")
-.attr("cx", 10)
-.attr("cy",10)
-.attr("r",150)
+.attr("cx", 450)
+.attr("cy",250)
+.attr("r",90)
 .attr("fill-opacity","0")
 .attr("border-radius","0.5")
 .attr("stroke",function(d,i){
 	//console.log(i," ",colors[i]);
 	return colors[i];
 })
-.attr("stroke-width","300")
+.attr("stroke-width","180")
 .attr("stroke-dasharray", function(d){
-	var valor = Math.round((942*d)/100);
+	var valor = Math.round((565*d)/100);
 	//console.log("position:" ,valor);
-	return valor +" 942";
+	return valor +" 565";
 })
 .attr("stroke-dashoffset",function(d,i){
 	if(i===0){
@@ -48,7 +46,7 @@ var circle1 = svg
 		var anteriores = probabilities.slice(0,i);
 		var valor = anteriores.reduce( (prev, curr) => prev + curr );
 		//console.log(valor);
-		var position = Math.round((942*valor)/100);
+		var position = Math.round((565*valor)/100);
 		position = -1*(position);
 		//console.log("posicao: ",position);
 		return position;
