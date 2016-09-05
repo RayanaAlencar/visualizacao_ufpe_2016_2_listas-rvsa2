@@ -1,0 +1,4 @@
+1- Diminuir o tamanho do raio para algo entre 2 e 0.5
+2- Se colocar transition e delay é possivel ver os dados se organizando e assim é possivel entender mais como eles estao sendo distribuidos.
+3- colocar o raio para tamanho 1 e a cor retornar o  cScale(d[1])
+4-Utilizar o rScale  

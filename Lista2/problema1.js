@@ -9,13 +9,13 @@ var svg = d3
 .append("g")
 .attr("transform", "translate(" + 20+ "," + 10+ ")");
 
-var pie = svg
+/*var pie = svg
 .append("circle")
 .attr("cx", 450)
 .attr("cy",250)
 .attr("r",90)
 .attr("style","fill:#ffdf80;stroke:#ffdf80;border-radius:0.5;stroke-width:180");
-
+*/
 
 var circle1 = svg
 .append("g")
@@ -32,7 +32,7 @@ var circle1 = svg
 	//console.log(i," ",colors[i]);
 	return colors[i];
 })
-.attr("stroke-width","180")
+.attr("stroke-width","75")
 .attr("stroke-dasharray", function(d){
 	var valor = Math.round((565*d)/100);
 	//console.log("position:" ,valor);
