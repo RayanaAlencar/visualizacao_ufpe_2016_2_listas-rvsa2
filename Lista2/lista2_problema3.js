@@ -68,32 +68,48 @@ function renderDataset(){
 	    return "black";//cScale(d[1]);
 	});
 
+var svgx = d3.select("body").select("svg");
 svg
 .on( "mousedown", function() {
+    console.log("mousedown");
     var p = d3.mouse( this);
-    svg.append("rect")
+
+    svg.append("g")
+    .append("rect")
     .attr("x",p[0])
     .attr("y",p[1])
-	.attr("width",20)
-	.attr("height",20)
+    .attr("rx","6")
+    .attr("ry","6")
+	.attr("width",0)
+	.attr("height",0)
+    .attr("stroke","red")
+    .attr("stroke-width","1px")
+    .attr("stroke-dasharray", "4px")
+    .attr("stroke-opacity"," 0.5")
+    .attr("fill","red");
     
-}).on( "mousemove", function() {
-		var s = svg.select( "rect.selection");
+})
+.on( "mousemove", function() {
+       	var s = svgx.select( "rect.selection");
+         console.log("mousemove");
+      // console.log("estou aqui ",!s.empty()," s eh ",s.attr( "x"));
     if( !s.empty()) {
-        var p = d3.mouse( this),
-
-            d = {
-                x       : parseInt( s.attr( "x"), 10),
-                y       : parseInt( s.attr( "y"), 10),
-                width   : parseInt( s.attr( "width"), 10),
-                height  : parseInt( s.attr( "height"), 10)
-            },
-            move = {
-                x : p[0] - d.x,
-                y : p[1] - d.y
-            }
+        var p = d3.mouse(this);
+           // console.log("valor de p eh ",p);
+          var  d = {
+                "x"  : parseInt( s.attr( "x"), 10),
+                "y"   : parseInt( s.attr( "y"), 10),
+               "width" : parseInt( s.attr( "width"), 10),
+                "height" : parseInt( s.attr( "height"), 10)
+            };
+           // console.log("valor de d eh ", d);
+         var   move = {
+                "x" : p[0] - d.x,
+                "y" : p[1] - d.y
+           }
         ;
 
+       // console.log("agora estou aqui ",p);
         if( move.x < 1 || (move.x*2<d.width)) {
             d.x = p[0];
             d.width -= move.x;
@@ -108,9 +124,12 @@ svg
             d.height = move.y;       
         }
        
-        s.attr( d);
-        //console.log( d);
+        s.attr(d);
+      //  console.log( "valor de d por ultimo eh ",d);
     }
+}).on( "mouseup", function() {
+    console.log("mouseup");
+    svg.select( ".selection").remove();
 });
   /*  circleSelection
     .enter()
