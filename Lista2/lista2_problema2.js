@@ -25,6 +25,25 @@ function pieChart(probabilities, colors){
 
 console.log("------------------------------------------------------------")
 var circleSelection =0;
+var legendaTexto =0;
+
+var legendaCor = svg
+.selectAll("rect")
+.data(colors)
+.enter()
+.append("rect")
+.transition()
+.attr("x",function(d){
+    return 680;
+})
+.attr("y",function(d,i){
+    return 40+20+i*40;
+})
+.attr("width",100)
+.attr("height",35)
+.style("fill", function(d,i) { return colors[i]; });
+
+
 if(!firstTime){
 
     circleSelection = svg
@@ -32,25 +51,68 @@ if(!firstTime){
             .data(dataset)
             .transition()
             .delay(function(d, i) {
-            var delay = 5;
-            console.log("delay de ",delay);
+            var delay = 50;
             return delay;
             })
             .duration(function(d, i) {
-                var delay = 10;
-                console.log("duracao de ",delay);
-                return delay;
+                var duration = 1000;
+                return duration;
             });
 
 
-} else {
-    firstTime = false;
- circleSelection = svg
-.append("g")
-.selectAll("circle")
+legendaTexto = svg
+.select("g")
+.selectAll("text")
 .data(probabilities)
-.enter()
-.append("circle");
+.text(function(d,i){
+    var d = parseFloat(d*100).toFixed(2);
+    return d + "%";
+})
+.attr("x","710")
+.attr("y",function(d,i){ 
+    var y = 72+20+i*35+i;
+    console.log("indice ",i," valor de y ",y);
+    return y;
+})
+.attr("font-size","18px");
+ 
+
+} else {
+
+var texts = svg
+    .append("text")
+    .text("Legenda :")
+    .attr("x","685")
+    .attr("y","45")
+    .attr("font-size","20px");
+
+
+firstTime = false;
+
+circleSelection = svg
+    .append("g")
+    .selectAll("circle")
+    .data(probabilities)
+    .enter()
+    .append("circle");
+
+var legendaTexto = svg
+     .select("g")
+    .selectAll("text")
+    .data(probabilities)
+    .enter()
+    .append("text")
+    .text(function(d,i){
+        var d = parseFloat(d*100).toFixed(2);;
+        return d + "%";
+    }).attr("x","710")
+    .attr("y",function(d,i){
+        var y = 72+20+i*35+i;
+        console.log("indice ",i," valor de y ",y);
+        return y;
+    })
+    .attr("font-size","18px");
+
 }
 
 circleSelection
@@ -83,49 +145,6 @@ circleSelection
 });
 
 
-var textos = svg
-.selectAll("text")
-.remove();
-
-var texts = svg
-.append("text")
-.text("Legenda :")
-.attr("x","685")
-.attr("y","45")
-.attr("font-size","20px");
-
-var legendaCor = svg
-.selectAll("rect")
-.data(colors)
-.enter()
-.append("rect")
-.transition()
-.attr("x",function(d){
-    return 680;
-})
-.attr("y",function(d,i){
-    return 40+20+i*40;
-})
-.attr("width",100)
-.attr("height",35)
-.style("fill", function(d,i) { return colors[i]; });
-
-var legendaTexto = svg
-.append("g")
-.selectAll("text")
-.data(probabilities)
-.enter()
-.append("text")
-.transition()
-.text(function(d,i){
-    var d = parseFloat(d*100).toFixed(2);;
-    return d + "%";
-})
-.attr("x","710")
-.attr("y",function(d,i){
-    return 40+20+12+i*45;
-})
-.attr("font-size","18px");
 
 
 }
@@ -136,53 +155,7 @@ function renderDataset(){
     //pieChart(dataset,colorScale.slice(0,5))
     
          pieChart(dataset,colorScale.slice(0,5));
-         //firstTime =false;
-    
-            /*var colors = colorScale.slice(0,5);
-            var probabilities = dataset
-            var circleSelection = svg
-            .selectAll("circle")
-            .data(dataset)
-            .transition()
-            .delay(function(d, i) {
-            var delay = 5;
-            console.log("delay de ",delay);
-            return delay;
-            })
-            .duration(function(d, i) {
-                var delay = 10;
-                console.log("duracao de ",delay);
-                return delay;
-            })
-            .attr("cx", 450)
-            .attr("cy",250)
-            .attr("r",90)
-            .attr("fill-opacity","0")
-            .attr("border-radius","0.5")
-            .attr("stroke",function(d,i){
-                return colors[i];
-            })
-            .attr("stroke-width","90")
-            .attr("stroke-dasharray", function(d,i){
-                var d = d*100;
-                var valor = Math.round((565*d)/100);    
-                return valor +" 565";
-            })
-            .attr("stroke-dashoffset",function(d,i){
-                if(i===0){
-                    return "0";
-                }else{
-                    var anteriores = probabilities.slice(0,i);
-                    var valor = anteriores.reduce( (prev, curr) => prev + curr );
-                    valor = valor*100;
-                    var position = Math.round((565*valor)/100);
-                    position = -1*(position);
-                    return position;
-                }
-
-            });
-    } */
-       
+        
 }
 
 

@@ -32,7 +32,7 @@ var circle1 = svg
 	//console.log(i," ",colors[i]);
 	return colors[i];
 })
-.attr("stroke-width","75")
+.attr("stroke-width","180")
 .attr("stroke-dasharray", function(d){
 	var valor = Math.round((565*d)/100);
 	//console.log("position:" ,valor);
