@@ -42,9 +42,9 @@ function renderDataset(){
     var yAxisGroup = d3.select("#yAxis").transition().call(yAxis);		    		  	
 
     //
-    var circleSelection = svg.select("#circles").selectAll("circle")
+    var circleSelection = svg.selectAll("circle")
 	.data(dataset);
-
+   // console.log("svg aquii 1",svg);
     //Remove circles that are not needed
     circleSelection
 	.exit()
@@ -68,14 +68,15 @@ function renderDataset(){
 	    return "black";//cScale(d[1]);
 	});
 
-var svgx = d3.select("body").select("svg");
-svg
-.on( "mousedown", function() {
-    console.log("mousedown");
+//var svg = d3.select("body").select("svg");
+/*svg = svg.selectAll("rect");
+console.log("svg aquii",svg);*/
+var svgall = d3.select("body").select("svg");
+svgall.on( "mousedown", function() {
+   // console.log("mousedown");
     var p = d3.mouse( this);
 
-    svg.append("g")
-    .append("rect")
+    svgall.append("rect")
     .attr("x",p[0])
     .attr("y",p[1])
     .attr("rx","6")
@@ -86,12 +87,13 @@ svg
     .attr("stroke-width","1px")
     .attr("stroke-dasharray", "4px")
     .attr("stroke-opacity"," 0.5")
-    .attr("fill","red");
+    .attr("fill","transparent")
+    .attr("class","selection");
     
 })
 .on( "mousemove", function() {
-       	var s = svgx.select( "rect.selection");
-         console.log("mousemove");
+       	var s = svgall.select( "rect");
+       //  console.log("mousemove");
       // console.log("estou aqui ",!s.empty()," s eh ",s.attr( "x"));
     if( !s.empty()) {
         var p = d3.mouse(this);
@@ -100,7 +102,7 @@ svg
                 "x"  : parseInt( s.attr( "x"), 10),
                 "y"   : parseInt( s.attr( "y"), 10),
                "width" : parseInt( s.attr( "width"), 10),
-                "height" : parseInt( s.attr( "height"), 10)
+               "height" : parseInt( s.attr( "height"), 10)
             };
            // console.log("valor de d eh ", d);
          var   move = {
@@ -109,7 +111,7 @@ svg
            }
         ;
 
-       // console.log("agora estou aqui ",p);
+        //console.log("O valor de p eh  ",p, " o valor de move eh ", move);
         if( move.x < 1 || (move.x*2<d.width)) {
             d.x = p[0];
             d.width -= move.x;
@@ -124,12 +126,47 @@ svg
             d.height = move.y;       
         }
        
-        s.attr(d);
+        s.attr("x",d.x).attr("y",d.y).attr("width",d.width).attr("height",d.height);
       //  console.log( "valor de d por ultimo eh ",d);
     }
 }).on( "mouseup", function() {
-    console.log("mouseup");
-    svg.select( ".selection").remove();
+    console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+    var rect = svgall.select("rect");
+     var  d = {
+                "x"  : parseInt( rect.attr( "x"), 10),
+                "y"   : parseInt( rect.attr( "y"), 10),
+               "width" : parseInt( rect.attr( "width"), 10),
+               "height" : parseInt( rect.attr( "height"), 10)
+            };
+    console.log("variaveis do rect eh ", d );
+    var largura = d.x + d.width;
+    var comprimento = d.y + d.height;
+    var circles = svg.selectAll("circle");
+    circles.attr("fill", function(c){
+        var dx = d.x;
+        var dy = d.y;
+        var cx = xScale(c[0]);
+        var cy = yScale(c[1]);
+        var cr = rScale(c[1]);
+        var ax = d.x;
+        var ay = d.y;
+        var bx = d.x +width;
+        var by = d.y;
+        var ex = d.x+height;
+        var ey = d.y;
+        var fx = d.x+width;
+        var fy = d.y+height;
+
+        //var matr = Math.matrix([ax,ay,1],[bx,by,1],[]) 
+        console.log("-----------------------------------------------------");
+        console.log("circulo raio",cr ," x ",cx, " y ",cy, " retangulo d x ",dx," d.y ",dy," largura ", largura, " comprimento ",comprimento);
+        if(cx+cr>=dx && cx+cr <= largura && cy+cr>=dy && cy+cr <= comprimento ){
+            console.log("Pintei de VERMELHO ");
+            return "red";
+        }
+        return "black";//cScale(d[1]);
+    });
+    rect.remove();
 });
   /*  circleSelection
     .enter()
@@ -173,7 +210,7 @@ function init(){
 	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     //
-    var circlesGroup = svg.append("g").attr("id","circles");
+    //var circlesGroup = svg..attr("id","circles");
     
     //
     svg.append("g").attr("id","xAxis").attr("transform","translate(0," + (height - margin.bottom) + ")");
