@@ -3,6 +3,8 @@ var margin = {top: 10, right: 20, bottom: 10, left: 20};
 var width = 900 - margin.left - margin.right;
 var height = 500 - margin.top - margin.bottom;
 
+
+var firstTime = true;
 //
 var generator  = d3.randomUniform(0, 1);
 var colorScale = colorbrewer.Paired[12];
@@ -22,24 +24,36 @@ function updateDataset(){
 function pieChart(probabilities, colors){
 
 console.log("------------------------------------------------------------")
+var circleSelection =0;
+if(!firstTime){
 
-var circle1 = svg
+    circleSelection = svg
+            .selectAll("circle")
+            .data(dataset)
+            .transition()
+            .delay(function(d, i) {
+            var delay = 5;
+            console.log("delay de ",delay);
+            return delay;
+            })
+            .duration(function(d, i) {
+                var delay = 10;
+                console.log("duracao de ",delay);
+                return delay;
+            });
+
+
+} else {
+    firstTime = false;
+ circleSelection = svg
 .append("g")
 .selectAll("circle")
 .data(probabilities)
 .enter()
-.append("circle")
-.transition()
-.delay(function(d, i) {
-    var delay = i *20+10;
-    console.log("delay de ",delay);
-    return delay;
-})
-.duration(function(d, i) {
-    var delay = 10;
-    console.log("duracao de ",delay);
-    return delay;
-})
+.append("circle");
+}
+
+circleSelection
 .attr("cx", 450)
 .attr("cy",250)
 .attr("r",90)
@@ -120,24 +134,60 @@ function renderDataset(){
     //Codigo para fazer insercao/remocao/update de elementos    
     //em algum momento voce provavelmente vai querer chamar algo como:
     //pieChart(dataset,colorScale.slice(0,5))
-    var circleSelection = svg
-    .selectAll("circle").remove()
-    .transition()
-    .delay(function(d, i) {
-    var delay = i *20+10;
-    console.log("delay de ",delay);
-    return delay;
-})
-.duration(function(d, i) {
-    var delay = 100;
-    console.log("duracao de ",delay);
-    return delay;
-});
-    pieChart(dataset,colorScale.slice(0,5));
+    
+         pieChart(dataset,colorScale.slice(0,5));
+         //firstTime =false;
+    
+            /*var colors = colorScale.slice(0,5);
+            var probabilities = dataset
+            var circleSelection = svg
+            .selectAll("circle")
+            .data(dataset)
+            .transition()
+            .delay(function(d, i) {
+            var delay = 5;
+            console.log("delay de ",delay);
+            return delay;
+            })
+            .duration(function(d, i) {
+                var delay = 10;
+                console.log("duracao de ",delay);
+                return delay;
+            })
+            .attr("cx", 450)
+            .attr("cy",250)
+            .attr("r",90)
+            .attr("fill-opacity","0")
+            .attr("border-radius","0.5")
+            .attr("stroke",function(d,i){
+                return colors[i];
+            })
+            .attr("stroke-width","90")
+            .attr("stroke-dasharray", function(d,i){
+                var d = d*100;
+                var valor = Math.round((565*d)/100);    
+                return valor +" 565";
+            })
+            .attr("stroke-dashoffset",function(d,i){
+                if(i===0){
+                    return "0";
+                }else{
+                    var anteriores = probabilities.slice(0,i);
+                    var valor = anteriores.reduce( (prev, curr) => prev + curr );
+                    valor = valor*100;
+                    var position = Math.round((565*valor)/100);
+                    position = -1*(position);
+                    return position;
+                }
+
+            });
+    } */
+       
 }
 
 
 function init(){
+
     //create clickable paragraph
     d3.select("body")
 	.append("p")
