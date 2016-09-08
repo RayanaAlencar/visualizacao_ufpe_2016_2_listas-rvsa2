@@ -9,6 +9,7 @@ var firstTime = true;
 //
 var generator  = d3.randomUniform(0, 1);
 var colorScale = colorbrewer.Paired[12];
+
 //          
 var dataset = [];
 
@@ -26,12 +27,8 @@ function pieChart(probabilities, colors){
 total = total+1;
 console.log("------------------------------------------------------------")
     
-    if(total===3){
-        probabilities = [0.5,0.5];
-    }
-
-    console.log("total ",total, " probabilities ",probabilities.length," ",probabilities);
-    
+   console.log("total ",total, " probabilities ",probabilities.length," ",probabilities);
+	
     var circleSelection = svg
             .selectAll("circle")
             .data(probabilities);
@@ -69,7 +66,7 @@ console.log("------------------------------------------------------------")
 
             });
 
-circleSelection
+	circleSelection
             .transition()
             .delay(function(d, i) {
             var delay = 50;
@@ -110,97 +107,107 @@ circleSelection
 
 
     var legendaCor = svg
-    .selectAll("rect")
-    .data(probabilities); 
+		.selectAll("rect")
+		.data(probabilities); 
 
     legendaCor.exit().remove();
 
     legendaCor
-    .enter()
-    .append("rect")
-    .transition()
-    .delay(50)
-    .attr("x",function(d){
-        return 680;
-    })
-    .attr("y",function(d,i){
-        return 40+20+i*40;
-    })
-    .attr("width",100)
-    .attr("height",35)
-    .style("fill", function(d,i) { return colors[i]; });
+		.enter()
+		.append("rect")
+		.transition()
+		.delay(50)
+		.attr("x",function(d){
+			return 680;
+		})
+		.attr("y",function(d,i){
+			return 40+20+i*40;
+		})
+		.attr("width",100)
+		.attr("height",35)
+		.style("fill", function(d,i) { return colors[i]; });
 
-    legendaCor
-    .transition()
-    .attr("x",function(d){
-        return 680;
-    })
-    .attr("y",function(d,i){
-        return 40+20+i*40;
-    })
-    .attr("width",100)
-    .attr("height",35)
-    .style("fill", function(d,i) { return colors[i]; });
+		console.log("atualizei as cores");
+		legendaCor
+		.transition()
+		.attr("x",function(d){
+			return 680;
+		})
+		.attr("y",function(d,i){
+			return 40+20+i*40;
+		})
+		.attr("width",100)
+		.attr("height",35)
+		.style("fill", function(d,i) { return colors[i]; });
 
 
-    var legendaTexto = svg
-   // .select("g")
-    .selectAll("text")
-    .data(probabilities);
-
+	if(firstTime){
+		firstTime = false;
+		legendaTexto = svg
+        .selectAll("text")
+        .data(probabilities);
+	}
+	
+	legendaTexto = svg
+		.selectAll("text")
+		.data(probabilities);
+	
     legendaTexto.exit().remove();
 
     legendaTexto
-    .enter()
-    .append("text")
-    .text(function(d,i){
-        var d = parseFloat(d*100).toFixed(2);;
-        return d + "%";
-    }).attr("x","710")
-    .attr("y",function(d,i){
-        var y = 72+20+i*35+i;
-        console.log("indice ",i," valor de y ",y);
-        return y;
-    })
-    .attr("font-size","18px");
+		.enter()
+		.append("text")
+		.text(function(d,i){
+			var d = parseFloat(d*100).toFixed(2);;
+			return d + "%";
+		}).attr("x","710")
+		.attr("y",function(d,i){
+			var y = 72+20+i*35+i;
+			//console.log("indice ",i," valor de y ",y);
+			return y;
+		})
+		.attr("font-size","18px");
 
-    legendaTexto
-    .transition()
-    .delay(function(d, i) {
-            var delay = 500;
-            return delay;
-            })
-            .duration(function(d, i) {
-                var duration = 1000;
-                return duration;
-    })
-    .text(function(d,i){
-    var d = parseFloat(d*100).toFixed(2);;
-    return d + "%";
-    })
-    .attr("x","710")
-    .attr("y",function(d,i){
-        var y = 72+20+i*35+i;
-        console.log("indice ",i," valor de y ",y);
-        return y;
-    })
-    .attr("font-size","18px");
-
-
-
-
+	console.log("atualizei as legendas");
+   
+   legendaTexto
+		.transition()
+		.delay(function(d, i) {
+				var delay = 500;
+				return delay;
+				})
+				.duration(function(d, i) {
+					var duration = 1000;
+					return duration;
+		})
+		.text(function(d,i){
+		var d = parseFloat(d*100).toFixed(2);;
+		return d + "%";
+		})
+		.attr("x","710")
+		.attr("y",function(d,i){
+			var y = 72+20+i*35+i;
+			//console.log("indice ",i," valor de y ",y);
+			return y;
+		})
+		.attr("font-size","18px");
 }
 
 function renderDataset(){
-    //Codigo para fazer insercao/remocao/update de elementos    
-    //em algum momento voce provavelmente vai querer chamar algo como:
-    //pieChart(dataset,colorScale.slice(0,5))
-  
-   
+        
+	if(firstTime ){
+		var legenda =  d3.select("svg")
+		.append("g")
+		.append("text")
+		.text("Legenda")
+		.attr("x",710)
+		.attr("y",58);
+		
+		firstTime = false;
 
-
-    
-         pieChart(dataset,colorScale.slice(0,5));
+	}
+	
+	pieChart(dataset,colorScale.slice(0,5));
         
 }
 
@@ -209,23 +216,23 @@ function init(){
 
     //create clickable paragraph
     d3.select("body")
-    .append("p")
-    .text("Click on me!")
-    .on("click", function() {
-        updateDataset();
-        renderDataset();
-    });
+		.append("p")
+		.text("Click on me!")
+		.on("click", function() {
+			updateDataset();
+			renderDataset();
+		});
     
     //Create SVG element
     var svg = d3.select("body")
-    .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    
+		.append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+		.append("g")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		
     return svg;
 }                         
 
-//
+
 var svg = init();

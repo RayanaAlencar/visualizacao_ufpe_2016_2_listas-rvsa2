@@ -72,7 +72,7 @@ function renderDataset(){
 /*svg = svg.selectAll("rect");
 console.log("svg aquii",svg);*/
 var svgall = d3.select("body").select("svg");
-svgall.on( "mousedown", function() {
+	svgall.on( "mousedown", function() {
    // console.log("mousedown");
     var p = d3.mouse( this);
 

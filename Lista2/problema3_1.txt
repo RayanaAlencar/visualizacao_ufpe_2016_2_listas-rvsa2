@@ -1,4 +1,15 @@
-1- Diminuir o tamanho do raio para algo entre 2 e 0.5
-2- Se colocar transition e delay é possivel ver os dados se organizando e assim é possivel entender mais como eles estao sendo distribuidos.
-3- colocar o raio para tamanho 1 e a cor retornar o  cScale(d[1])
-4-Utilizar o rScale  
+1- O que você aprendeu a partir dessa visualização?
+Não é possivel tirar conclusão sobre esses dados.
+A unica observação que consigo fazer é que apenas um numero pequenos de pontos não possuem dados.
+
+Por que isso ocorreu?
+A quantidade de dados é muito grande e muitos deles são muito proximos.
+
+
+O que você faria para modificar isso?
+1- Diminuir o tamanho do raio para algo entre 2 e 0.5 ou utilizar o rScale.
+2- Se colocar transition e delay é possivel ver os dados se organizando
+sendo possivel entender mais como eles estao sendo distribuidos.
+3- Colocar o raio para tamanho 1 e a cor retornar o  cScale(d[1]).
+isso faz com que pontos em diferentes quadros(bottom,middle,up) tenham cores diferentes.
+
