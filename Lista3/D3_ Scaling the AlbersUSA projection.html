@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<!-- saved from url=(0083)http://www.cin.ufpe.br/~nivan/teaching/data_vis/fall_2016/material/lecture10_1.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		
+		<title>Mapa Recife</title>
+		<script type="text/javascript" src="./D3_ Scaling the AlbersUSA projection_files/d3.v4.min.js.download"></script>
+		<style type="text/css">		
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+			var xOffset = 0;
+			var yOffset = 0;
+			var initialMousePosition  = [0,0] 
+			var state = "idle";
+			
+			var color = d3.scale.quantize()
+                    .range(["rgb(237,248,233)", "rgb(186,228,179)",
+                     "rgb(116,196,118)", "rgb(49,163,84)","rgb(0,109,44)"]);					
+			
+			//Width and height
+			var w = 900;
+			var h = 900;
+			var projecao = 100000;
+			
+			//Define path generator
+			var projection = d3.geoMercator()
+			.translate([w/2, h/2])
+			.center([-34.87986,-8.05596])
+			.scale(projecao);
+
+			var path = d3.geoPath()
+				.projection(projection);
+
+			//Create SVG element
+			var svg = d3.select("body")
+						.append("svg")
+						.attr("width", w)
+						.attr("height", h);
+
+			//Load in GeoJSON data
+			d3.json("bairros.json", function(json) {
+				
+				//Bind data and create one path per GeoJSON feature
+				svg.selectAll("path")
+				   .data(json.features)
+				   .enter()
+				   .append("path")
+				   .attr("d", path);
+		
+			});
+			
+			d3.json("acidentes-2014-11-novembro.json",function(data){
+			    color.domain([
+                d3.min(data, function(d) { return d.value; }),
+                d3.max(data, function(d) { return d.value; })
+				]);
+				
+				d3.json("bairros.json", function(json) {
+				
+				for (var i = 0; i < data.length; i++) {
+				//Grab state name
+				var dataState = data[i].state;
+				//Grab data value, and convert from string to float
+				var dataValue = parseFloat(data[i].value);
+				//Find the corresponding state inside the GeoJSON
+				for (var j = 0; j < json.features.length; j++) {
+				var jsonState = json.features[j].properties.name;
+				if (dataState == jsonState) {
+					//Copy the data value into the JSON
+					json.features[j].properties.value = dataValue;
+					//Stop looking through the JSON
+					break;
+				}
+			}
+				//Bind data and create one path per GeoJSON feature
+				svg.selectAll("path")
+				   .data(json.features)
+				   .enter()
+				   .append("path")
+				   .attr("d", path);
+				   
+				   
+		
+			});
+			
+			}
+		
+			d3.select("svg")
+			.on("mousedown",function(d){
+				var p = d3.mouse( this);
+				initialMousePosition = p;
+				state = "pan";
+				d3.event.stopPropagation();
+				d3.event.preventDefault();
+			})
+			.on("mousemove",function(d){
+				if(state === "pan"){
+				var p = d3.mouse( this),
+					move = {
+						x : p[0] - initialMousePosition[0],
+						y : p[1] - initialMousePosition[1]
+					};
+				xOffset -= (move.x);
+				yOffset += (move.y);
+				initialMousePosition = p;    
+					renderDataset();
+				}
+				d3.event.stopPropagation();
+				d3.event.preventDefault();
+			})
+			.on("mouseup",function(d){	
+				state = "idle";
+				renderDataset();
+				d3.event.stopPropagation();
+				d3.event.preventDefault();
+			})
+			.on("wheel.zoom",function(d){
+				d3.event.stopPropagation();
+				d3.event.preventDefault();
+				if(d3.event.wheelDeltaY > 0)
+				projecao = projecao+(100000/2);
+				else
+				projecao = projecao-(100000/2);
+				renderDataset();  
+			});
+			
+			
+			
+		function renderDataset(){
+	
+			//Define path generator
+			var projection = d3.geoMercator()
+			.translate([w/2+xOffset, h/2+ yOffset])
+			.center([-34.87986,-8.05596])
+			.scale(projecao);
+			
+			var svg = d3.select("body")
+						.select("svg");
+
+						
+			var path = d3.geoPath().projection(projection);
+			
+			d3.json("bairros.json", function(json) {
+				var paths = svg.selectAll("path").data(json.features);	   
+				paths.exit().remove();
+			});
+		
+
+			//Load in GeoJSON data
+			d3.json("bairros.json", function(json) {			 
+				   svg.selectAll("path")
+				   .attr("d", path);
+		
+			});
+					
+}
+			
+		</script>
+	
+
+</body>
+</html>
