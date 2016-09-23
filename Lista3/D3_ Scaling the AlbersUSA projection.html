@@ -3,11 +3,12 @@
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		
 		<title>Mapa Recife</title>
-		<script type="text/javascript" src="./D3_ Scaling the AlbersUSA projection_files/d3.v4.min.js.download"></script>
+		<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
 		<style type="text/css">		
 		</style>
 	</head>
 	<body>
+		<label> <input type="checkbox" id ="myselect"> Acidentes Novembro 2014</label>
 		<script type="text/javascript">
 			var xOffset = 0;
 			var yOffset = 0;
@@ -41,7 +42,7 @@
 			d3.json("bairros.json", function(json) {
 					for(var i =0;i<json.features.length;i++){
 						var obj = json.features[i];
-						console.log(typeof(obj)," " , obj);
+						//console.log(typeof(obj)," " , obj);
 						arrayJson.push(obj);
 						//console.log("Tamanho de arrayJson eh ",arrayJson.length);
 					}
@@ -55,29 +56,15 @@
 		
 			});
 			
-			
+			var acidentesNovembro =[]
 			d3.json("acidentes-2014-11-novembro.json",function(data){
 			    //color.domain([ d3.min(data, function(d) { return d.value; }), d3.max(data, function(d) { return d.value; })]);
 				//console.log("AQUIIIIIIIIIIIIIII",data.features.length);
-				d3.json("bairros.json", function(json) {
 				var aux = data.features;
 				for (var i = 0; i < aux.length; i++) {
-				var cood = aux[i];
-				var j = json[i];
-					console.log("cood " ,cood," json ",j);
-					break;
-				/* var dataValue = parseFloat(data[i].value);
-				
-				for (var j = 0; j < json.features.length; j++) {
-				var jsonState = json.features[j].properties.name;
-				if (dataState == jsonState) {
-					
-					json.features[j].properties.value = dataValue;
-				
-					break;
-					*/
-					}
-				});
+						var cood = aux[i];
+						acidentesNovembro.push(cood);
+				}
 			});
 
 				  		
@@ -118,11 +105,79 @@
 				projecao = projecao+(100000/2);
 				else
 				projecao = projecao-(100000/2);
+				console.log("zoom");
 				renderDataset();  
 			});
 			
+		d3.select("input").on("change", function(){
+			console.log(this.checked);
+			if(this.checked){
+				acidentes();
+			}else {
+				removeAcidentes();
+			}
+		});
 			
+		
+
+		function removeAcidentes(){
+			console.log("removeAcidentes");
+			d3.selectAll("circle").style("fill", "transparent");
+		}	
+
+		function acidentes(){
+		console.log("acidentes");
+		var svg = d3.select("svg");
+
+		var projection = d3.geoMercator()
+			.translate([w/2+xOffset, h/2+ yOffset])
+			.center([-34.87986,-8.05596])
+			.scale(projecao);
+
+			var aci = svg.selectAll("circles").data(acidentesNovembro);
+/*
+			aci
+			.exit()
+			.remove();*/
+				
+			aci
+			.enter()
+			.append("circle")
+			.attr("r",3)
+			.attr("transform", function(d) {return "translate(" + projection([d.properties.longitude,d.properties.latitude]) + ")";})
+			.attr("fill",function(d){
+				if(d.properties.detalhes==="Moto"){
+					return "red";
+				}else if (d.properties.detalhes==="Ciclomotor"){
+					return "yellow";
+				}else if(d.properties.detalhes==="Ciclista"){
+					return "purple";
+				}else if(d.properties.detalhes==="Pedestre"){
+					return "blue";
+				}else if(d.properties.detalhes==="Táxi"){ 
+					return "black";
+				}
+			});
+
+			aci
+			.attr("r",3)
+			.attr("transform", function(d) {return "translate(" + projection([d.properties.longitude,d.properties.latitude]) + ")";})
+			.attr("fill",function(d){
+				if(d.properties.detalhes==="Moto"){
+					return "red";
+				}else if (d.properties.detalhes==="Ciclomotor"){
+					return "yellow";
+				}else if(d.properties.detalhes==="Ciclista"){
+					return "purple";
+				}else if(d.properties.detalhes==="Pedestre"){
+					return "blue";
+				}else if(d.properties.detalhes==="Táxi"){ 
+					return "black";
+				}
+			});
 			
+		}
+
 		function renderDataset(){
 	
 			//Define path generator
@@ -136,22 +191,27 @@
 
 						
 			var path = d3.geoPath().projection(projection);
-			
-			
+						
 				var paths = svg.selectAll("path").data(arrayJson);	   
+				
 				paths.exit().remove();
-			
+	
+				paths.attr("d", path);
 		
+			var aci = d3.selectAll("circle");
 
-			//Load in GeoJSON data
-					 
-				   svg.selectAll("path").data(arrayJson)
-				   .attr("d", path);
-		
+			aci.exit().remove();
 			
+			console.log("renderDataset");
+
+			aci
+			.attr("r",3)
+			.attr("transform", function(d) {return "translate(" + projection([d.properties.longitude,d.properties.latitude]) + ")";});
 					
 }
-			
+
+
+		
 		</script>
 	
 
