@@ -1,6 +1,8 @@
 			var margin = {top: 10, right: 20, bottom: 10, left: 20};
 			var w = 900 - margin.left - margin.right;
 			var h = 500 - margin.top - margin.bottom;
+			var w2 = 500- margin.left - margin.right;
+			var h2 = 500- margin.top - margin.bottom;
 			var xOffset = 0;
 			var yOffset = 0;
 			var initialMousePosition  = [0,0] 
@@ -18,7 +20,7 @@
 				dictNovembro["Ciclomotores"]=0;
 				dictNovembro["Motocicletas"]=0;
 				dictNovembro["Pedestres"]=0;
-
+			
 			var acidentesNovembro =[];
 			var arrayJson = [];
 			var projecao = 100000;
@@ -44,8 +46,8 @@
 			 svg2 = d3.select("body")
 						.append("svg")
 						.attr("class","painel2")
-						.attr("width", w)
-						.attr("height", h)
+						.attr("width", w2)
+						.attr("height", h2)
 						.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
@@ -97,8 +99,8 @@
 						y : p[1] - initialMousePosition[1]
 					};
 
-				xOffset -= (move.x)*0.5;
-				yOffset += (move.y)*0.5;
+				xOffset += (move.x);
+				yOffset += (move.y);
 				initialMousePosition = p;    
 					renderDataset();
 				}
@@ -305,7 +307,18 @@
 			   		data.push(causasAcidentes["Pedestres"]);
 
 			}
-			
+					
+			console.log(causasAcidentes, " ",data);
+
+		var xScale = d3.scaleBand()
+						.domain(d3.range(data.length))
+						.rangeRound([0, w2])
+      					.padding(0.05);
+      
+		var yScale = d3.scaleLinear()
+						.domain([0, d3.max(data)])
+						.range([h2, 0]);
+
 
 			var histo = d3.select("body").select("svg.painel2").selectAll("rect").data(data);
 			
@@ -316,14 +329,14 @@
 			   .enter()
 			   .append("rect")
 			   .attr("x", function(d, i) {
-			   		return i * (500 / data.length);
+			   		return xScale(i);
 			   })
 			   .attr("y", function(d) {
-			   		return h - (d * 4);
+			   		return yScale(d);
 			   })
-			   .attr("width", 40)
+			   .attr("width", xScale.bandwidth())
 			   .attr("height", function(d) {
-			   		return d * 4;
+			   		return h2 - yScale(d);
 			   })
 			   .attr("fill",function(d,i){
 			   	return pintarHisto(i);
@@ -332,14 +345,14 @@
 
 			histo
 			   .attr("x", function(d, i) {
-			   		return i * (500 / data.length);
+			   		return xScale(i);
 			   })
 			   .attr("y", function(d) {
-			   		return h - (d * 4);
+			   		return yScale(d);
 			   })
-			   .attr("width", 40)
+			   .attr("width", xScale.bandwidth())
 			   .attr("height", function(d) {
-			   		return d * 4;
+			   		return h2 - yScale(d);
 			   })
 			   .attr("fill",function(d,i){
 			   	return pintarHisto(i);
@@ -353,12 +366,13 @@
 			   .text(function(d) {
 				        return d;
 				  	 })
-				  	.attr("x", function(d, i) {
-				        return i * (500 / data.length)+5;
-				  	 })
+				  	.attr("text-anchor", "middle") 
+				   .attr("x", function(d, i) {
+				   		return xScale(i) + xScale.bandwidth() / 2;
+				   })
 				   .attr("y", function(d) {
-				        return h - (d * 4)+15;
-				   	})
+				   		return yScale(d) + 14;
+				   })
 				   .attr("font-family", "sans-serif")
 				   .attr("font-size", "14px")
 				   .attr("fill", "white");
@@ -368,12 +382,13 @@
 			   .text(function(d) {
 				        return d;
 				  	 })
-				  	.attr("x", function(d, i) {
-				        return i * (500 / data.length)+5;
-				  	 })
+				  .attr("text-anchor", "middle") 
+				   .attr("x", function(d, i) {
+				   		return xScale(i) + xScale.bandwidth() / 2;
+				   })
 				   .attr("y", function(d) {
-				        return h - (d * 4)+15;
-				   	})
+				   		return yScale(d) + 14;
+				   })
 				   .attr("font-family", "sans-serif")
 				   .attr("font-size", "14px")
 				   .attr("fill", "white");
@@ -381,13 +396,13 @@
 
 		function pintarHisto (d){
 				if(d===0){
-					return "red";
+					return "blue";
 				}else if (d===1){
 					return "#DAA520";
 				}else if(d===2){
 					return "purple";
 				}else if(d===3){
-					return "blue";
+					return "red";
 				}else if(d===4){ 
 					return "black";
 				}
