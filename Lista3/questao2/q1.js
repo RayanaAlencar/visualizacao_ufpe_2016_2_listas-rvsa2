@@ -157,18 +157,24 @@
 			    //console.log("variaveis do rect eh ", d );
 			    var largura = d.x + d.width;
 			    var comprimento = d.y + d.height;
-			   
+			   	var entrou = 0;
 			    d3.select("svg").selectAll("circle")
 			    	.each(function(c){
 					var dx = d.x;
 			    	var dy = d.y;
 			        var cx = d3.select(this).attr("cx");
 			        var cy = d3.select(this).attr("cy");
+
 			    	if(cx>=dx && cx <= largura && cy>=dy && cy <= comprimento ){
+			    		entrou = 1;
 			           causasAcidentes[c.properties.tipo] = causasAcidentes[c.properties.tipo] +1;
 			        }
 			    });
 			   		
+			    	if(entrou===1){ //entao foi selecionado algum ponto
+			    		histograma(1);
+			    		entrou =0;
+			    	}
 			   		console.log("Total de acidentes por tipo : ")
 			   		console.log("Automóveis e outros",causasAcidentes["Automóveis e outros"]);
 			   		console.log("Ciclistas",causasAcidentes["Ciclistas"]);
@@ -223,6 +229,8 @@
 }
 		function removeAcidentes(){
 			d3.selectAll("circle").style("fill", "transparent");
+			d3.select("body").select("svg.painel2").selectAll("rect").attr("fill", "transparent");
+			d3.select("body").select("svg.painel2").selectAll("text").attr("fill", "transparent");
 		}	
 
 		function acidentes(){
@@ -268,29 +276,50 @@
 					return pintar(d); 
 				});
 			
-			for(var i =0;i<acidentesNovembro.length;i++){
-					//console.log(acidentesNovembro[i].properties.tipo);
- 					dictNovembro[acidentesNovembro[i].properties.tipo] = dictNovembro[acidentesNovembro[i].properties.tipo] +1;
-			}
+					histograma(0);
+		}
+
+
+		function histograma(controle){
 			
 			var data =[];
-			for(var j =0; j<tiposAcidente.length;j++){
-				var ac = tiposAcidente[j];
-				var aux = dictNovembro[ac];
-				data.push(aux);
+			if(controle===0){
+					for(var i =0;i<acidentesNovembro.length;i++){
+	 					dictNovembro[acidentesNovembro[i].properties.tipo] = dictNovembro[acidentesNovembro[i].properties.tipo] +1;
+					}
+					for(var j =0; j<tiposAcidente.length;j++){
+						var ac = tiposAcidente[j];
+						var aux = dictNovembro[ac];
+						data.push(aux);
+					}
+					dictNovembro["Automóveis e outros"] =0;
+					dictNovembro["Ciclistas"]=0;
+					dictNovembro["Ciclomotores"]=0;
+					dictNovembro["Motocicletas"]=0;
+					dictNovembro["Pedestres"]=0;
+			}else {
+					data.push(causasAcidentes["Automóveis e outros"]);
+			   		data.push(causasAcidentes["Ciclistas"]);
+			   		data.push(causasAcidentes["Ciclomotores"]);
+			   		data.push(causasAcidentes["Motocicletas"]);
+			   		data.push(causasAcidentes["Pedestres"]);
+
 			}
 			
 
-			var histo = d3.select("body").select("svg.painel2").selectAll("rect");
+			var histo = d3.select("body").select("svg.painel2").selectAll("rect").data(data);
+			
+			histo.exit()
+				.remove();
+					
 			histo
-				.data(data)
 			   .enter()
 			   .append("rect")
 			   .attr("x", function(d, i) {
 			   		return i * (500 / data.length);
 			   })
 			   .attr("y", function(d) {
-			   		return 100 - (d * 4);
+			   		return h - (d * 4);
 			   })
 			   .attr("width", 40)
 			   .attr("height", function(d) {
@@ -299,14 +328,62 @@
 			   .attr("fill",function(d,i){
 			   	return pintarHisto(i);
 			   });
-		}
 
+
+			histo
+			   .attr("x", function(d, i) {
+			   		return i * (500 / data.length);
+			   })
+			   .attr("y", function(d) {
+			   		return h - (d * 4);
+			   })
+			   .attr("width", 40)
+			   .attr("height", function(d) {
+			   		return d * 4;
+			   })
+			   .attr("fill",function(d,i){
+			   	return pintarHisto(i);
+			   });
+
+			   var labels = d3.select("body").select("svg.painel2").selectAll("text").data(data);
+
+			   labels
+			   .enter()
+			   .append("text")
+			   .text(function(d) {
+				        return d;
+				  	 })
+				  	.attr("x", function(d, i) {
+				        return i * (500 / data.length)+5;
+				  	 })
+				   .attr("y", function(d) {
+				        return h - (d * 4)+15;
+				   	})
+				   .attr("font-family", "sans-serif")
+				   .attr("font-size", "14px")
+				   .attr("fill", "white");
+
+
+			labels
+			   .text(function(d) {
+				        return d;
+				  	 })
+				  	.attr("x", function(d, i) {
+				        return i * (500 / data.length)+5;
+				  	 })
+				   .attr("y", function(d) {
+				        return h - (d * 4)+15;
+				   	})
+				   .attr("font-family", "sans-serif")
+				   .attr("font-size", "14px")
+				   .attr("fill", "white");
+		}
 
 		function pintarHisto (d){
 				if(d===0){
 					return "red";
 				}else if (d===1){
-					return "yellow";
+					return "#DAA520";
 				}else if(d===2){
 					return "purple";
 				}else if(d===3){
@@ -321,7 +398,7 @@
 				if(d.properties.tipo==="Automóveis e outros"){
 					return "blue";
 				}else if (d.properties.tipo==="Ciclistas"){
-					return "yellow";
+					return "#DAA520";
 				}else if(d.properties.tipo==="Ciclomotores"){
 					return "purple";
 				}else if(d.properties.tipo==="Motocicletas"){
