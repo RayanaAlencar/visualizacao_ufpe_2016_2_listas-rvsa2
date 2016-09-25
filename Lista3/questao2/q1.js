@@ -316,13 +316,6 @@
 					 		return 0.3;
 					 });
 					
-					var g = d3.select("body").select("svg.painel2").select("g");
-					var legendas = g.selectAll("text");
-
-					legendas.each(function(l){
-						console.log("legenda ",l);
-					})
-
 					var circles = svg.selectAll("circle");
 					circles.attr("opacity",function(c,d){
 						console.log("estou na selecao ",c.properties.tipo);
@@ -479,7 +472,7 @@
 				   .attr("fill", "white")
 				   .attr("opacity",2);
 
-			var legenda = d3.select("body").select("svg.painel2").select("g").selectAll("text").data(data);
+			/*var legenda = d3.select("body").select("svg.painel2").select("g").selectAll("text").data(data);
 
 			   legenda
 			   .enter()
@@ -524,7 +517,7 @@
 				   })
 				   .attr("font-family", "sans-serif")
 				   .attr("font-size", "11px")
-				   .attr("fill", "black");
+				   .attr("fill", "white");*/
 
 		}
 
