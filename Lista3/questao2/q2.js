@@ -84,7 +84,7 @@
 		
 			d3.select("svg")
 			.on("click",function(d){
-				console.log("click ",state);
+				//console.log("click ",state);
 				var p = d3.mouse( this);
 				initialMousePosition = p;
 				if(state=="pan"){
@@ -97,7 +97,7 @@
 				//console.log("click");
 			})
 			.on("mousemove",function(d){
-				console.log("mousemove ",state);
+				//console.log("mousemove ",state);
 				if(state === "pan"){
 				var p = d3.mouse( this),
 					move = {
@@ -150,7 +150,7 @@
 			    }
 			})
 			.on("mouseup",function(d){	
-				console.log("mouseup ",state);
+				//console.log("mouseup ",state);
 				//state = "idle";
 				renderDataset();
 				d3.event.stopPropagation();
@@ -196,7 +196,7 @@
 			    		histograma(1);
 			    		entrou =0;
 			    	}else {
-			    		console.log("nenhum selecionado");
+			    		//console.log("nenhum selecionado");
 			    		histograma(0);
 			    	}
 			   		console.log("Total de acidentes por tipo : ")
@@ -214,7 +214,7 @@
 				    rect.remove();
 			})
 			.on("wheel.zoom",function(d){
-					console.log("zoom ",state);
+					//console.log("zoom ",state);
 					d3.event.stopPropagation();
 					d3.event.preventDefault();
 					if(d3.event.wheelDeltaY > 0)
@@ -223,7 +223,7 @@
 					projecao = projecao-(100000/2);
 					renderDataset();  
 			}).on("contextmenu", function(d, i) {
-					console.log("left ",state);
+					//console.log("left ",state);
 					d3.event.preventDefault();
 					var p = d3.mouse( this);
 				    svgall.append("rect")
@@ -243,7 +243,7 @@
 	
 
 		d3.select("input").on("change", function(){
-			console.log(this.checked);
+			//console.log(this.checked);
 			if(this.checked){
 				acidentes();
 			}else {
@@ -318,7 +318,7 @@
 					
 					var circles = svg.selectAll("circle");
 					circles.attr("opacity",function(c,d){
-						console.log("estou na selecao ",c.properties.tipo);
+						//console.log("estou na selecao ",c.properties.tipo);
 						var aux = tiposAcidente.indexOf(c.properties.tipo);
 							if(aux==b){
 						 			return 1;
@@ -356,7 +356,7 @@
 
 			   		for(var j=0;j<data.length;j++){
 			   			if(data[j]===0){
-			   				console.log(data);
+			   				//console.log(data);
 			   				var ac = tiposAcidente[j];
 							var aux = dictNovembro[ac];
 							data[j] = aux;

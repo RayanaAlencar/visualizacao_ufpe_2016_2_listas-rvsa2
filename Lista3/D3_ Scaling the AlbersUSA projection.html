@@ -8,7 +8,15 @@
 		</style>
 	</head>
 	<body>
-		<label> <input type="checkbox" id ="myselect"> Acidentes Novembro 2014</label>
+		<label>
+		<input type="checkbox" id ="myselect"> Acidentes Novembro 2014</label>
+	<p>
+		<font color="blue">Automóveis e outros</font><br>
+		<font color="green">Ciclistas</font><br>
+		<font color="purple">Ciclomotores</font><br>
+		<font color="red">Motocicletas</font><br>
+		<font color="black">Pedestres</font>
+	</p>
 		<script type="text/javascript">
 		//Width and height
 			var margin = {top: 10, right: 20, bottom: 10, left: 20};
@@ -58,8 +66,8 @@
 				   .enter()
 				   .append("path")
 				   .attr("d", path)
-				   .attr("fill","#00CED1")
-				   .attr("stroke","black");
+				   .attr("fill","#87CEFA")
+				   .attr("stroke","white");
 		
 			});
 			
@@ -80,7 +88,11 @@
 			.on("click",function(d){
 				var p = d3.mouse( this);
 				initialMousePosition = p;
-				state = "pan";
+				if(state=="pan"){
+					state = "idle";
+				}else{
+					state = "pan";
+				}
 				d3.event.stopPropagation();
 				d3.event.preventDefault();
 				//console.log("click");
@@ -139,8 +151,7 @@
 			    }
 			})
 			.on("mouseup",function(d){	
-				//console.log("mouseup");
-				state = "idle";
+				//state = "idle";
 				renderDataset();
 				d3.event.stopPropagation();
 				d3.event.preventDefault();
@@ -155,7 +166,7 @@
 			    var largura = d.x + d.width;
 			    var comprimento = d.y + d.height;
 			   
-			    d3.select("svg").selectAll("circle")
+			    /*d3.select("svg").selectAll("circle")
 			    	.each(function(c){
 					var dx = d.x;
 			    	var dy = d.y;
@@ -164,9 +175,24 @@
 			    	if(cx>=dx && cx <= largura && cy>=dy && cy <= comprimento ){
 			           causasAcidentes[c.properties.tipo] = causasAcidentes[c.properties.tipo] +1;;
 			        }
-			    });
+			    });*/
+				var circles =  d3.select("svg").selectAll("circle");
+				circles.attr("opacity", function(c){
+					var dx = d.x;
+			    	var dy = d.y;
+			        var cx = d3.select(this).attr("cx");
+			        var cy = d3.select(this).attr("cy");
+
+			    	if(cx>=dx && cx <= largura && cy>=dy && cy <= comprimento ){
+			    		entrou = 1;
+			           causasAcidentes[c.properties.tipo] = causasAcidentes[c.properties.tipo] +1;
+			           return 1;
+			        }
+			        	return 0.3;
+					});
 			   		
-			   		console.log("Total de acidentes por tipo : ")
+			   	
+			   		console.log("Total de acidentes por tipo : ");
 			   		console.log("Automóveis e outros",causasAcidentes["Automóveis e outros"]);
 			   		console.log("Ciclistas",causasAcidentes["Ciclistas"]);
 			   		console.log("Ciclomotores",causasAcidentes["Ciclomotores"]);
@@ -271,15 +297,15 @@
 
 		function pintar (d){
 
-				if(d.properties.tipo==="Motocicletas"){
-					return "red";
-				}else if (d.properties.tipo==="Ciclomotores"){
-					return "yellow";
-				}else if(d.properties.tipo==="Ciclistas"){
-					return "purple";
-				}else if(d.properties.tipo==="Pedestres"){
+				if(d.properties.tipo==="Automóveis e outros"){
 					return "blue";
-				}else if(d.properties.tipo==="Automóveis e outros"){ 
+				}else if (d.properties.tipo==="Ciclistas"){
+					return "green";
+				}else if(d.properties.tipo==="Ciclomotores"){
+					return "purple";
+				}else if(d.properties.tipo==="Motocicletas"){
+					return "red";
+				}else if(d.properties.tipo==="Pedestres"){ 
 					return "black";
 				}
 			
