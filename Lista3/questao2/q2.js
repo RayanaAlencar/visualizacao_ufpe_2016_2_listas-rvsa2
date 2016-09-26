@@ -1,4 +1,4 @@
-			var margin = {top: 10, right: 20, bottom: 10, left: 20};
+			var margin = {top: 20, right: 20, bottom: 70, left: 20};
 			var w = 900 - margin.left - margin.right;
 			var h = 500 - margin.top - margin.bottom;
 			var w2 = 500- margin.left - margin.right;
@@ -25,6 +25,7 @@
 			var arrayJson = [];
 			var projecao = 100000;
 			var svg2 =0;
+			//var first = true;
 			
 	function init(){ 
 			//Define path generator
@@ -46,11 +47,18 @@
 			 svg2 = d3.select("body")
 						.append("svg")
 						.attr("class","painel2")
-						.attr("width", w2)
-						.attr("height", h2)
+						.attr("width", w2+margin.left + margin.right)
+						.attr("height", h2+margin.bottom + margin.top)
+						.append("g")
 						.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-			g = svg2.append("g");
-
+			
+			  svg2.append("g")
+					 .attr("id","xAxis")
+					 .attr("transform","translate(0," + h2 + ")");
+   			 
+   			 svg2.append("g")
+   			 		.attr("class","histograma")
+   			 		
 
 			d3.json("bairros.json", function(json) {
 					for(var i =0;i<json.features.length;i++){
@@ -376,15 +384,15 @@
 
 		var xScale = d3.scaleBand()
 						.domain(d3.range(data.length))
-						.rangeRound([0, w2-50])
+						.rangeRound([0, w2])
       					.padding(0.05);
       
 		var yScale = d3.scaleLinear()
 						.domain([0, d3.max(data)])
-						.range([h2-50, 0]);
+						.range([h2, 0]);
 
-
-			var histo = d3.select("body").select("svg.painel2").selectAll("rect").data(data);
+		
+			var histo = d3.select("body").select("svg.painel2").select("g.histograma").selectAll("rect").data(data);
 			
 			histo.exit()
 				.remove();
@@ -436,7 +444,7 @@
 			         return tiposAcidente[i];
 			   }).attr("font-size", "14px");
 
-			   var labels = d3.select("body").select("svg.painel2").selectAll("text").data(data);
+			   var labels = d3.select("body").select("svg.painel2").select("g.histograma").selectAll("text").data(data);
 
 			   labels
 			   .enter()
@@ -472,52 +480,14 @@
 				   .attr("fill", "white")
 				   .attr("opacity",2);
 
-			/*var legenda = d3.select("body").select("svg.painel2").select("g").selectAll("text").data(data);
-
-			   legenda
-			   .enter()
-			   .append("text")
-			   .text(function(d,i) {
-			   			if(i==0){
-			   				return "Automóveis/Outros";
-			   			}
-				        return (tiposAcidente[i]);
-				  	 })
-				  .attr("text-anchor", "middle") 
-				   .attr("x", function(d, i) {
-				   		if(i==0){
-				   			return (xScale(i) + xScale.bandwidth() / 2 + 4);
-				   		}
-				   		return xScale(i) + xScale.bandwidth() / 2;
-				   })
-				   .attr("y", function(d) {
-				   		return h2;
-				   })
-				   .attr("font-family", "sans-serif")
-				   .attr("font-size", "11px")
-				   .attr("fill", "black");
-
-
-			legenda
-			    .text(function(d,i) {
-			   			if(i==0){
-			   				return "Automóveis/Outros";
-			   			}
-				        return (tiposAcidente[i]);
-				  	 })
-				  .attr("text-anchor", "middle") 
-				   .attr("x", function(d, i) {
-				   		if(i==0){
-				   			return (xScale(i) + xScale.bandwidth() / 2 + 4);
-				   		}
-				   		return xScale(i) + xScale.bandwidth() / 2;
-				   })
-				   .attr("y", function(d) {
-				   		return h2;
-				   })
-				   .attr("font-family", "sans-serif")
-				   .attr("font-size", "11px")
-				   .attr("fill", "white");*/
+			
+				var xAxis = d3.axisBottom(xScale).tickFormat(function(d) { return tiposAcidente[d]; });		  
+			    var xAxisGroup = d3.select("#xAxis")
+				.transition()
+				.call(xAxis);
+				first = false;
+			
+			
 
 		}
 
