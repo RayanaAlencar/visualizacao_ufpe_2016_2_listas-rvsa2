@@ -44,6 +44,7 @@
 			//Create SVG element
 			var svg = d3.select("body")
 						.append("svg")
+						.attr("class","painel1")
 						.attr("width", w)
 						.attr("height", h)
 						.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -63,13 +64,6 @@
 						.attr("height", h3 + margin.top + margin.bottom)
 						.append("g")
 						.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-			  svg2.append("g")
-					 .attr("id","xAxis")
-					 .attr("transform","translate(0," + h2 + ")");
-   			 
-   			 svg2.append("g")
-   			 		.attr("class","histograma")
    			 		
 
 			d3.json("bairros.json", function(json) {
@@ -100,9 +94,9 @@
 			});
 
 
-			var svgall = d3.select("body").select("svg");		  		
+			var svgall = d3.select("body").select("svg.painel1");		  		
 		
-			d3.select("svg")
+			d3.select("svg.painel1")
 			.on("click",function(d){
 				//console.log("click ",state);
 				var p = d3.mouse( this);
@@ -133,7 +127,7 @@
 				d3.event.stopPropagation();
 				d3.event.preventDefault();
 
-				  	var s = svgall.select( "rect");
+				  	var s = svgall.select("rect");
 
 			    if( !s.empty()) {
 			        var p = d3.mouse(this);
@@ -186,7 +180,7 @@
 			    var largura = d.x + d.width;
 			    var comprimento = d.y + d.height;
 			   	var entrou = 0;
-			   var circles =  d3.select("svg").selectAll("circle");
+			   var circles =  d3.select("svg.painel1").selectAll("circle");
 
 			   circles.attr("opacity", function(c){
 					var dx = d.x;
@@ -273,15 +267,27 @@
 
 }
 		function removeAcidentes(){
-			d3.selectAll("circle").style("fill", "transparent");
+			d3.select("body").select("svg.painel1").selectAll("circle").style("fill", "transparent");
 			d3.select("body").select("svg.painel2").selectAll("rect").attr("fill", "transparent");
 			d3.select("body").select("svg.painel2").selectAll("text").attr("fill", "transparent");
+			d3.select("body").select("svg.painel2").selectAll("g").remove();
+			d3.select("body").select("svg.painel3").selectAll("text").attr("fill", "transparent");
+			d3.select("body").select("svg.painel3").selectAll("rect").style("fill", "transparent");
+			d3.select("body").select("svg.painel3").selectAll("circle").attr("opacity", 0);
+			
 		}	
 
 		function acidentes(){
+	  		
+	  		var svg2 = d3.select("body").select("svg.painel2");
+	  		svg2.append("g")
+					 .attr("id","xAxis")
+					 .attr("transform","translate(0," + h2 + ")");
+   			 
+   			 svg2.append("g")
+   			 		.attr("class","histograma")
 
-
-			var svg = d3.select("svg");
+			var svg = d3.select("body").select("svg.painel1");
 
 			var projection = d3.geoMercator()
 				.translate([w/2+xOffset, h/2+ yOffset])
@@ -346,6 +352,22 @@
 						 		return 0.3;
 					});
 					
+					var circles2 = d3.select("svg.painel3").selectAll("circle");
+
+					circles2.attr("opacity",function(c,d){
+							if(d==b){
+					 			return 1;
+					 		}
+					 		return 0.3;
+					});
+
+					var rects2 = d3.select("svg.painel3").selectAll("rect");
+					 rects2.attr("opacity", function(c,d){
+					 		if(d==b){
+					 			return 1;
+					 		}
+					 		return 0.3;
+					 });
 
 				});
 
@@ -502,7 +524,7 @@
 				.call(xAxis);
 				first = false;
 			
-				pieChart(data);
+				pieChart(data,positionOpacity);
 			
 
 		}
@@ -545,7 +567,7 @@
 			.scale(projecao);
 			
 			var svg = d3.select("body")
-						.select("svg");
+						.select("svg.painel1");
 
 						
 			var path = d3.geoPath().projection(projection);
@@ -556,7 +578,7 @@
 	
 				paths.attr("d", path);
 		
-			var aci = d3.selectAll("circle");
+			var aci = svg.selectAll("circle");
 
 			aci.exit().remove();
 			
@@ -572,8 +594,15 @@
 					
 	}
 
-function pieChart(probabilities){
+function add(a, b) {
+		    return a + b;
+		}
 
+function pieChart(probabilities,positionOpacity){
+
+		var sum = probabilities.reduce(add, 0);
+
+		
 	    var circleSelection = svg3
 	            .selectAll("circle")
 	            .data(probabilities);
@@ -593,6 +622,9 @@ function pieChart(probabilities){
 	            })
 	            .attr("stroke-width","90")
 	            .attr("stroke-dasharray", function(d,i){
+	            		//console.log("antes de converter ",d);
+	            		d = d*100/sum;
+	            		//console.log("total ",sum, " d ", d);
 	                var valor = Math.round((565*d)/100);    
 	                return valor +" 565";
 	            })
@@ -602,12 +634,14 @@ function pieChart(probabilities){
 	                }else{
 	                    var anteriores = probabilities.slice(0,i);
 	                    var valor = anteriores.reduce( (prev, curr) => prev + curr );
-	                   // valor = valor*100;
+	                    valor = valor*100/sum;
 	                    var position = Math.round((565*valor)/100);
 	                    position = -1*(position);
 	                    return position;
 	                }
 
+	            }).attr("opacity",function(d,i){
+	            	return positionOpacity[i];
 	            });
 
 		circleSelection
@@ -620,7 +654,7 @@ function pieChart(probabilities){
 	                var duration = 1000;
 	                return duration;
 	            })
-	            .attr("cx", 450)
+	             .attr("cx", 450)
 	            .attr("cy",250)
 	            .attr("r",90)
 	            .attr("fill-opacity","0")
@@ -630,6 +664,8 @@ function pieChart(probabilities){
 	            })
 	            .attr("stroke-width","90")
 	            .attr("stroke-dasharray", function(d,i){
+	            		console.log("antes de converter ",d);
+	            		d = d*100/sum;
 	                var valor = Math.round((565*d)/100);    
 	                return valor +" 565";
 	            })
@@ -639,12 +675,14 @@ function pieChart(probabilities){
 	                }else{
 	                    var anteriores = probabilities.slice(0,i);
 	                    var valor = anteriores.reduce( (prev, curr) => prev + curr );
-	                   // valor = valor*100;
+	                    valor = valor*100/sum;
 	                    var position = Math.round((565*valor)/100);
 	                    position = -1*(position);
 	                    return position;
 	                }
 
+	            }).attr("opacity",function(d,i){
+	            	return positionOpacity[i];
 	            });
 
 
@@ -667,9 +705,12 @@ function pieChart(probabilities){
 			})
 			.attr("width",300)
 			.attr("height",35)
-			.style("fill", function(d,i) { return pintarHisto(i); });
+			.style("fill", function(d,i) { return pintarHisto(i); })
+			.attr("opacity",function(d,i){
+	            	return positionOpacity[i];
+	            });
 
-			console.log("atualizei as cores");
+			//console.log("atualizei as cores");
 			legendaCor
 			.transition()
 			.attr("x",function(d){
@@ -678,9 +719,12 @@ function pieChart(probabilities){
 			.attr("y",function(d,i){
 				return 40+20+i*40;
 			})
-			.attr("width",100)
+			.attr("width",300)
 			.attr("height",35)
-			.style("fill", function(d,i) { return pintarHisto(i); });
+			.style("fill", function(d,i) { return pintarHisto(i); })
+			.attr("opacity",function(d,i){
+	            	return positionOpacity[i];
+	        });
 
 
 		if(firstTime){
@@ -710,7 +754,7 @@ function pieChart(probabilities){
 			.attr("font-size","14px")
 			.attr("fill","white");
 
-		console.log("atualizei as legendas");
+		//console.log("atualizei as legendas");
 	   
 	   legendaTexto
 			.transition()
@@ -732,4 +776,85 @@ function pieChart(probabilities){
 			})
 			.attr("font-size","14px")
 			.attr("fill","white");
+
+
+
+		svg3.selectAll("circle").on("click",function(a,b){
+					
+					var rects =  d3.select("body").select("svg.painel2").selectAll("rect");
+					 rects.attr("opacity", function(c,d){
+					 		if(d==b){
+					 			return 1;
+					 		}
+					 		return 0.3;
+					 });
+					
+					var circles = d3.select("body").select("svg.painel1").selectAll("circle");
+					circles.attr("opacity",function(c,d){
+						//console.log("estou na selecao ",c.properties.tipo);
+						var aux = tiposAcidente.indexOf(c.properties.tipo);
+							if(aux==b){
+						 			return 1;
+						 		}
+						 		return 0.3;
+					});
+					
+					var circles2 = d3.select("svg.painel3").selectAll("circle");
+
+					circles2.attr("opacity",function(c,d){
+							if(d==b){
+					 			return 1;
+					 		}
+					 		return 0.3;
+					});
+
+					var rects2 = d3.select("svg.painel3").selectAll("rect");
+					 rects2.attr("opacity", function(c,d){
+					 		if(d==b){
+					 			return 1;
+					 		}
+					 		return 0.3;
+					 });
+
+				});
+
+
+		svg3.selectAll("rect").on("click",function(a,b){
+					
+					var rects =  d3.select("body").select("svg.painel2").selectAll("rect");
+					 rects.attr("opacity", function(c,d){
+					 		if(d==b){
+					 			return 1;
+					 		}
+					 		return 0.3;
+					 });
+					
+					var circles = d3.select("body").select("svg.painel1").selectAll("circle");
+					circles.attr("opacity",function(c,d){
+						//console.log("estou na selecao ",c.properties.tipo);
+						var aux = tiposAcidente.indexOf(c.properties.tipo);
+							if(aux==b){
+						 			return 1;
+						 		}
+						 		return 0.3;
+					});
+					
+					var circles2 = d3.select("svg.painel3").selectAll("circle");
+
+					circles2.attr("opacity",function(c,d){
+							if(d==b){
+					 			return 1;
+					 		}
+					 		return 0.3;
+					});
+
+					var rects2 = d3.select("svg.painel3").selectAll("rect");
+					 rects2.attr("opacity", function(c,d){
+					 		if(d==b){
+					 			return 1;
+					 		}
+					 		return 0.3;
+					 });
+
+				});
 }
