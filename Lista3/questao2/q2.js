@@ -21,6 +21,7 @@
 				dictNovembro["Motocicletas"]=0;
 				dictNovembro["Pedestres"]=0;
 			
+			var first = true;
 			var acidentesNovembro =[];
 			var arrayJson = [];
 			var projecao = 100000;
@@ -51,7 +52,8 @@
 						.attr("height", h2+margin.bottom + margin.top)
 						.append("g")
 						.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-			
+
+								
 			  svg2.append("g")
 					 .attr("id","xAxis")
 					 .attr("transform","translate(0," + h2 + ")");
@@ -264,11 +266,19 @@
 			d3.selectAll("circle").style("fill", "transparent");
 			d3.select("body").select("svg.painel2").selectAll("rect").attr("fill", "transparent");
 			d3.select("body").select("svg.painel2").selectAll("text").attr("fill", "transparent");
+			d3.select("body").select("svg.painel2").selectAll("g").remove();
 		}	
 
 		function acidentes(){
 
-
+			var svg2 = d3.select("body").select("svg.painel2");
+	  		svg2.append("g")
+					 .attr("id","xAxis")
+					 .attr("transform","translate(0," + h2 + ")");
+   			 
+   			 svg2.append("g")
+   			 		.attr("class","histograma")
+   			 		
 			var svg = d3.select("svg");
 
 			var projection = d3.geoMercator()
