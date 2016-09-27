@@ -1,30 +1,55 @@
 			var margin = {top: 20, right: 20, bottom: 70, left: 20};
 			var w = 900 - margin.left - margin.right;
 			var h = 500 - margin.top - margin.bottom;
-			var w2 = 500- margin.left - margin.right;
-			var h2 = 500- margin.top - margin.bottom;
+			var w2 = 750- margin.left - margin.right;
+			var h2 = 750- margin.top - margin.bottom;
 			var w3 = 900 - margin.left - margin.right;
 			var h3 = 500 - margin.top - margin.bottom;
 			var xOffset = 0;
 			var yOffset = 0;
 			var initialMousePosition  = [0,0] 
 			var state = "idle";
-			var tiposAcidente = ["Automóveis e outros","Ciclistas","Ciclomotores","Motocicletas","Pedestres"];
+			var tiposAcidente = ["Atropelamentos","Automóveis","Ciclistas","Ciclomotores","Colisoes","Motocicletas","Motos e Ciclomotores","Outros","Pedestres"];
 			var causasAcidentes = {};
-				causasAcidentes["Automóveis e outros"] =0;
+				causasAcidentes["Atropelamentos"] =0;
+				causasAcidentes["Automóveis"]=0;
 				causasAcidentes["Ciclistas"]=0;
 				causasAcidentes["Ciclomotores"]=0;
+				causasAcidentes["Colisoes"]=0;
 				causasAcidentes["Motocicletas"]=0;
+				causasAcidentes["Motos e Ciclomotores"] =0;
+				causasAcidentes["Outros"] = 0;
 				causasAcidentes["Pedestres"]=0;
-			var dictNovembro = {};
-				dictNovembro["Automóveis e outros"] =0;
-				dictNovembro["Ciclistas"]=0;
-				dictNovembro["Ciclomotores"]=0;
-				dictNovembro["Motocicletas"]=0;
-				dictNovembro["Pedestres"]=0;
+
+
+
+			var dict = {};
+				dict["Atropelamentos"] =0;
+				dict["Automóveis"]=0;
+				dict["Ciclistas"]=0;
+				dict["Ciclomotores"]=0;
+				dict["Colisoes"]=0;
+				dict["Motocicletas"]=0;
+				dict["Motos e Ciclomotores"] =0;
+				dict["Outros"] = 0;
+				dict["Pedestres"]=0;
 
 			var firstTime = true;
 			var acidentesNovembro =[];
+			var acidentesAnoTodo = {};
+			acidentesAnoTodo["1"] = [];
+			acidentesAnoTodo["2"] = [];
+			acidentesAnoTodo["3"] = [];
+			acidentesAnoTodo["4"] = [];
+			acidentesAnoTodo["5"] = [];
+			acidentesAnoTodo["6"] = [];
+			acidentesAnoTodo["7"] = [];
+			acidentesAnoTodo["8"] = [];
+			acidentesAnoTodo["9"] = [];
+			acidentesAnoTodo["10"] = [];
+			acidentesAnoTodo["11"] = [];
+			acidentesAnoTodo["12"] = [];
+
 			var arrayJson = [];
 			var projecao = 100000;
 			var svg2 =0;
@@ -85,11 +110,20 @@
 			});
 			
 			
-			d3.json("acidentes-2014-11-novembro.json",function(data){
-				var aux = data.features;
+
+			d3.csv("acidentes-2014.csv",function(data){
+				var aux = data;
 				for (var i = 0; i < aux.length; i++) {
-						var cood = aux[i];
-						acidentesNovembro.push(cood);
+					var dia = aux[i].data;
+					var diasp = dia.split("/");
+					var mes = diasp[0];
+					aux[i].longitude= aux[i].longitude.replace(",", ".");
+					aux[i].longitude= aux[i].longitude.replace(",", "");
+					aux[i].latitude= aux[i].latitude.replace(",", ".");
+					aux[i].latitude= aux[i].latitude.replace(",", "");	
+					aux[i].longitude = parseFloat(aux[i].longitude);
+					aux[i].latitude = parseFloat(aux[i].latitude);
+					acidentesAnoTodo[mes].push(aux[i]);
 				}
 			});
 
@@ -190,7 +224,7 @@
 
 			    	if(cx>=dx && cx <= largura && cy>=dy && cy <= comprimento ){
 			    		entrou = 1;
-			           causasAcidentes[c.properties.tipo] = causasAcidentes[c.properties.tipo] +1;
+			           causasAcidentes[c.tipo] = causasAcidentes[c.tipo] +1;
 			           return 1;
 			        }
 			        	return 0.3;
@@ -207,24 +241,27 @@
 		        }
 		    });*/
 			    	if(entrou===1){ //entao foi selecionado algum ponto
-			    		histograma(1);
+			    		var mes = document.getElementById('meses');
+						mes = mes.value;
+			    		histograma(1,acidentesAnoTodo[mes]);
 			    		entrou =0;
 			    	}else {
-			    		//console.log("nenhum selecionado");
-			    		histograma(0);
+			    		var mes = document.getElementById('meses');
+						mes = mes.value;
+			    		histograma(0,acidentesAnoTodo[mes]);
+			    		
 			    	}
 			   		console.log("Total de acidentes por tipo : ")
-			   		console.log("Automóveis e outros",causasAcidentes["Automóveis e outros"]);
+			   		console.log("Atropelamentos",causasAcidentes["Atropelamentos"]);
+			   		console.log("Automóveis",causasAcidentes["Automóveis"]);
 			   		console.log("Ciclistas",causasAcidentes["Ciclistas"]);
 			   		console.log("Ciclomotores",causasAcidentes["Ciclomotores"]);
+			   		console.log("Colisoes",causasAcidentes["Colisoes"]);
 			   		console.log("Motocicletas",causasAcidentes["Motocicletas"]);
-			   		console.log("Pedestres",causasAcidentes["Pedestres"]);
+					console.log("Motos e Ciclomotores",causasAcidentes["Motos e Ciclomotores"]);
+			   		console.log("Outros",causasAcidentes["Outros"]);
+					console.log("Pedestres",causasAcidentes["Pedestres"]);
 
-					causasAcidentes["Automóveis e outros"] =0;
-					causasAcidentes["Ciclistas"]=0;
-					causasAcidentes["Ciclomotores"]=0;
-					causasAcidentes["Motocicletas"]=0;
-					causasAcidentes["Pedestres"]=0;
 				    rect.remove();
 			})
 			.on("wheel.zoom",function(d){
@@ -257,10 +294,25 @@
 	
 
 		d3.select("input").on("change", function(){
-			//console.log(this.checked);
+			var mes = document.getElementById('meses');
+			mes = mes.value;
 			if(this.checked){
-				acidentes();
+				var array = acidentesAnoTodo[mes];
+				console.log("o array enviado eh ", array);
+				acidentes(array);
 			}else {
+				removeAcidentes();
+			}
+		});
+
+		d3.select("select").on("change", function(){
+			
+			var sel = document.getElementById('myselect');
+			check = sel.checked;
+			if(check){
+				var array = acidentesAnoTodo[this.value];
+				acidentes(array);
+			}else{
 				removeAcidentes();
 			}
 		});
@@ -277,7 +329,8 @@
 			
 		}	
 
-		function acidentes(){
+		function acidentes(acidentes){
+			
 	  		
 	  		var svg2 = d3.select("body").select("svg.painel2");
 	  		svg2.append("g")
@@ -294,8 +347,9 @@
 				.center([-34.87986,-8.05596])
 				.scale(projecao);
 
-				var aci = svg.selectAll("circles").data(acidentesNovembro);
-
+				var aci = svg.selectAll("circle").data(acidentes);
+				
+				console.log("recebi o array ",acidentes);
 				aci
 				.exit()
 				.remove();
@@ -306,10 +360,10 @@
 				.attr("r",5)
 				//.attr("transform", function(d) {return "translate(" + projection([d.properties.longitude,d.properties.latitude]) + ")";})
 				.attr("cx", function(d) {
-	                   return (projection([d.properties.longitude, d.properties.latitude]))[0];
+	                   return (projection([d.longitude, d.latitude]))[0];
 	           	})
 				.attr("cy", function(d) {
-	                   return (projection([d.properties.longitude, d.properties.latitude]))[1];
+	                   return (projection([d.longitude, d.latitude]))[1];
 	           	})
 				.attr("fill",function(d){
 					return pintar(d); 
@@ -319,17 +373,17 @@
 				aci
 				.attr("r",5)
 				.attr("cx", function(d) {
-	                   return projection([d.properties.longitude, d.properties.latitude])[0];
+	                   return projection([d.longitude, d.latitude])[0];
 	           	})
 				.attr("cy", function(d) {
-	                   return projection([d.properties.longitude, d.properties.latitude])[1];
+	                   return projection([d.longitude, d.latitude])[1];
 	           	})
 				//.attr("transform", function(d) {return "translate(" + projection([d.properties.longitude,d.properties.latitude]) + ")";})
 				.attr("fill",function(d){
 					return pintar(d); 
 				});
 			
-					histograma(0);
+					histograma(0,acidentes);
 
 
 				svg2.selectAll("rect").on("click",function(a,b){
@@ -345,7 +399,7 @@
 					var circles = svg.selectAll("circle");
 					circles.attr("opacity",function(c,d){
 						//console.log("estou na selecao ",c.properties.tipo);
-						var aux = tiposAcidente.indexOf(c.properties.tipo);
+						var aux = tiposAcidente.indexOf(c.tipo);
 							if(aux==b){
 						 			return 1;
 						 		}
@@ -376,34 +430,38 @@
 		}
 
 
-		function histograma(controle){
+		function histograma(controle,acidentes){
 			
 			var data =[];
-			var positionOpacity =[0.3,0.3,0.3,0.3,0.3];
-			for(var i =0;i<acidentesNovembro.length;i++){
-	 					dictNovembro[acidentesNovembro[i].properties.tipo] = dictNovembro[acidentesNovembro[i].properties.tipo] +1;
+			var positionOpacity =[0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3];
+			for(var i =0;i<acidentes.length;i++){
+	 					dict[acidentes[i].tipo] = dict[acidentes[i].tipo] +1;
 			}
+
 			if(controle===0){
-					
+						//console.log("controle 0");
 					for(var j =0; j<tiposAcidente.length;j++){
 						var ac = tiposAcidente[j];
-						var aux = dictNovembro[ac];
+						var aux = dict[ac];
 						data.push(aux);
 					}
 					
 			}else {
-					//console.log(causasAcidentes);
-					data.push(causasAcidentes["Automóveis e outros"]);
-			   		data.push(causasAcidentes["Ciclistas"]);
-			   		data.push(causasAcidentes["Ciclomotores"]);
-			   		data.push(causasAcidentes["Motocicletas"]);
-			   		data.push(causasAcidentes["Pedestres"]);
+				data.push(causasAcidentes["Atropelamentos"]);
+				data.push(causasAcidentes["Automóveis"]);
+				data.push(causasAcidentes["Ciclistas"]);
+				data.push(causasAcidentes["Ciclomotores"]);
+				data.push(causasAcidentes["Colisoes"]);
+				data.push(causasAcidentes["Motocicletas"]);
+				data.push(causasAcidentes["Motos e Ciclomotores"]);
+				data.push(causasAcidentes["Outros"] );
+				data.push(causasAcidentes["Pedestres"]);
 
 			   		for(var j=0;j<data.length;j++){
 			   			if(data[j]===0){
 			   				//console.log(data);
 			   				var ac = tiposAcidente[j];
-							var aux = dictNovembro[ac];
+							var aux = dict[ac];
 							data[j] = aux;
 			   			}else{
 			   				positionOpacity[j]=1;
@@ -411,14 +469,18 @@
 			   		}
 
 			}
-
-			dictNovembro["Automóveis e outros"] =0;
-			dictNovembro["Ciclistas"]=0;
-			dictNovembro["Ciclomotores"]=0;
-			dictNovembro["Motocicletas"]=0;
-			dictNovembro["Pedestres"]=0;
+				
+				dict["Atropelamentos"] =0;
+				dict["Automóveis"]=0;
+				dict["Ciclistas"]=0;
+				dict["Ciclomotores"]=0;
+				dict["Colisoes"]=0;
+				dict["Motocicletas"]=0;
+				dict["Motos e Ciclomotores"] =0;
+				dict["Outros"] = 0;
+				dict["Pedestres"]=0;
 					
-
+				//console.log("data do histograma eh ",data);
 		var xScale = d3.scaleBand()
 						.domain(d3.range(data.length))
 						.rangeRound([0, w2])
@@ -534,28 +596,57 @@
 					return "blue";
 				}else if (d===1){
 					return "green";
-				}else if(d===2){
+				}else if(d==2){
+					return "#00ffcc";
+				}
+				else if(d===3){
 					return "purple";
-				}else if(d===3){
+				}else if(d===4){
 					return "red";
-				}else if(d===4){ 
+				}else if(d===5){ 
 					return "black";
+				}else if(d==6){
+					return"#ff00bf";
+				}else if(d==7){
+					return"#663300";
+				}else if(d==8){
+					return "#e6e600";
 				}
 			
 		}
-
+/*
+	dict["Atropelamentos"] =0;
+				dict["Automóveis"]=0;
+				dict["Ciclomotores"]=0;
+				dict["Colisoes"]=0;
+				dict["Motocicletas"]=0;
+				dict["Motos e Ciclomotores"] =0;
+				dict["Outros"] = 0;
+				dict["Pedestres"]=0;
+*/
 		function pintar (d){
-				if(d.properties.tipo==="Automóveis e outros"){
+				if(d.tipo=="Atropelamentos"){
 					return "blue";
-				}else if (d.properties.tipo==="Ciclistas"){
-					return "green";
-				}else if(d.properties.tipo==="Ciclomotores"){
-					return "purple";
-				}else if(d.properties.tipo==="Motocicletas"){
-					return "red";
-				}else if(d.properties.tipo==="Pedestres"){ 
-					return "black";
 				}
+				if(d.tipo==="Automóveis"){
+					return "green";
+				}else if(d.tipo=="Ciclistas"){
+					return "#00ffcc";
+				}
+				else if (d.tipo==="Ciclomotores"){
+					return "purple";
+				}else if(d.tipo==="Colisoes"){
+					return "red";
+				}else if(d.tipo==="Motocicletas"){
+					return "black";
+				}else if(d.tipo==="Motos e Ciclomotores"){ 
+					return"#ff00bf";
+				}else if("Outros"){
+					return"#663300";
+				}else if("Pedestres"){
+					return "#e6e600";
+				}
+			
 			
 		}
 
@@ -585,10 +676,10 @@
 			aci
 			.attr("r",3)
 			.attr("cx", function(d) {
-                   return projection([d.properties.longitude, d.properties.latitude])[0];
+                   return projection([d.longitude, d.latitude])[0];
            	})
 			.attr("cy", function(d) {
-                   return projection([d.properties.longitude, d.properties.latitude])[1];
+                   return projection([d.longitude, d.latitude])[1];
            	});
 			//.attr("transform", function(d) {return "translate(" + projection([d.properties.longitude,d.properties.latitude]) + ")";});
 					
@@ -599,6 +690,7 @@ function add(a, b) {
 		}
 
 function pieChart(probabilities,positionOpacity){
+		console.log("pieChart ",probabilities);
 
 		var sum = probabilities.reduce(add, 0);
 
@@ -620,16 +712,24 @@ function pieChart(probabilities,positionOpacity){
 	            .attr("stroke",function(d,i){
 	                return pintarHisto(i);
 	            })
-	            .attr("stroke-width","90")
+	            .attr("stroke-width",function(d){
+	            		if(d===0){
+	            		 	return 0;
+	            		 }
+	            		 return 90;
+	            })
 	            .attr("stroke-dasharray", function(d,i){
 	            		//console.log("antes de converter ",d);
+	            		if(d===0){
+	            		 	return 0;
+	            		 }
 	            		d = d*100/sum;
 	            		//console.log("total ",sum, " d ", d);
 	                var valor = Math.round((565*d)/100);    
 	                return valor +" 565";
 	            })
 	            .attr("stroke-dashoffset",function(d,i){
-	                if(i===0){
+	                if(i===0 || d===0){
 	                    return "0";
 	                }else{
 	                    var anteriores = probabilities.slice(0,i);
@@ -641,20 +741,23 @@ function pieChart(probabilities,positionOpacity){
 	                }
 
 	            }).attr("opacity",function(d,i){
+	            	if(d===0){
+	            		 	return 0;
+	            	}
 	            	return positionOpacity[i];
 	            });
 
 		circleSelection
 	            .transition()
 	            .delay(function(d, i) {
-	            var delay = 50;
+	            var delay = 10;
 	            return delay;
 	            })
 	            .duration(function(d, i) {
-	                var duration = 1000;
+	                var duration = 1000/2;
 	                return duration;
 	            })
-	             .attr("cx", 450)
+	            .attr("cx", 450)
 	            .attr("cy",250)
 	            .attr("r",90)
 	            .attr("fill-opacity","0")
@@ -662,15 +765,24 @@ function pieChart(probabilities,positionOpacity){
 	            .attr("stroke",function(d,i){
 	                return pintarHisto(i);
 	            })
-	            .attr("stroke-width","90")
+	            .attr("stroke-width",function(d){
+	            		if(d===0){
+	            		 	return 0;
+	            		 }
+	            		 return 90;
+	            })
 	            .attr("stroke-dasharray", function(d,i){
-	            		console.log("antes de converter ",d);
+	            		//console.log("antes de converter ",d);
+	            		if(d===0){
+	            		 	return 0;
+	            		 }
 	            		d = d*100/sum;
+	            		//console.log("total ",sum, " d ", d);
 	                var valor = Math.round((565*d)/100);    
 	                return valor +" 565";
 	            })
 	            .attr("stroke-dashoffset",function(d,i){
-	                if(i===0){
+	                if(i===0 || d===0){
 	                    return "0";
 	                }else{
 	                    var anteriores = probabilities.slice(0,i);
@@ -682,6 +794,9 @@ function pieChart(probabilities,positionOpacity){
 	                }
 
 	            }).attr("opacity",function(d,i){
+	            	if(d===0){
+	            		 	return 0;
+	            	}
 	            	return positionOpacity[i];
 	            });
 
@@ -701,6 +816,7 @@ function pieChart(probabilities,positionOpacity){
 				return 680;
 			})
 			.attr("y",function(d,i){
+
 				return 40+20+i*40;
 			})
 			.attr("width",300)
@@ -748,6 +864,10 @@ function pieChart(probabilities,positionOpacity){
 				return d +" "+ tiposAcidente[i];
 			}).attr("x","690")
 			.attr("y",function(d,i){
+				if(i===7|| i==6 || i==8){
+					return 72+35+i*35+i;
+				}
+				
 				var y = 72+20+i*35+i;
 				return y;
 			})
@@ -771,6 +891,9 @@ function pieChart(probabilities,positionOpacity){
 			})
 			.attr("x","690")
 			.attr("y",function(d,i){
+				if(i===7|| i==6 || i==8){
+					return 72+35+i*35+i;
+				}
 				var y = 72+20+i*35+i;
 				return y;
 			})
@@ -792,7 +915,7 @@ function pieChart(probabilities,positionOpacity){
 					var circles = d3.select("body").select("svg.painel1").selectAll("circle");
 					circles.attr("opacity",function(c,d){
 						//console.log("estou na selecao ",c.properties.tipo);
-						var aux = tiposAcidente.indexOf(c.properties.tipo);
+						var aux = tiposAcidente.indexOf(c.tipo);
 							if(aux==b){
 						 			return 1;
 						 		}
@@ -832,7 +955,7 @@ function pieChart(probabilities,positionOpacity){
 					var circles = d3.select("body").select("svg.painel1").selectAll("circle");
 					circles.attr("opacity",function(c,d){
 						//console.log("estou na selecao ",c.properties.tipo);
-						var aux = tiposAcidente.indexOf(c.properties.tipo);
+						var aux = tiposAcidente.indexOf(c.tipo);
 							if(aux==b){
 						 			return 1;
 						 		}
@@ -857,4 +980,42 @@ function pieChart(probabilities,positionOpacity){
 					 });
 
 				});
+
+		svg3.selectAll("text").on("click",function(a,b){
+				
+				var rects =  d3.select("body").select("svg.painel2").selectAll("rect");
+					 rects.attr("opacity", function(c,d){
+					 		if(d==b){
+					 			return 1;
+					 		}
+					 		return 0.3;
+					 });
+					
+					var circles = d3.select("body").select("svg.painel1").selectAll("circle");
+					circles.attr("opacity",function(c,d){
+						//console.log("estou na selecao ",c.properties.tipo);
+						var aux = tiposAcidente.indexOf(c.tipo);
+							if(aux==b){
+						 			return 1;
+						 		}
+						 		return 0.3;
+					});
+					
+					var circles2 = d3.select("svg.painel3").selectAll("circle");
+
+					circles2.attr("opacity",function(c,d){
+							if(d==b){
+					 			return 1;
+					 		}
+					 		return 0.3;
+					});
+
+					var rects2 = d3.select("svg.painel3").selectAll("rect");
+					 rects2.attr("opacity", function(c,d){
+					 		if(d==b){
+					 			return 1;
+					 		}
+					 		return 0.3;
+					 });
+		});
 }
