@@ -298,7 +298,6 @@
 			mes = mes.value;
 			if(this.checked){
 				var array = acidentesAnoTodo[mes];
-				console.log("o array enviado eh ", array);
 				acidentes(array);
 			}else {
 				removeAcidentes();
@@ -312,8 +311,6 @@
 			if(check){
 				var array = acidentesAnoTodo[this.value];
 				acidentes(array);
-			}else{
-				removeAcidentes();
 			}
 		});
 
@@ -380,6 +377,7 @@
 	           	})
 				//.attr("transform", function(d) {return "translate(" + projection([d.properties.longitude,d.properties.latitude]) + ")";})
 				.attr("fill",function(d){
+					console.log("cor ",pintar(d));
 					return pintar(d); 
 				});
 			
@@ -694,8 +692,8 @@ function pieChart(probabilities,positionOpacity){
 
 		var sum = probabilities.reduce(add, 0);
 
-		
-	    var circleSelection = svg3
+		var svg3 = d3.select("body").select("svg.painel3");
+	    var circleSelection = d3.select("body").select("svg.painel3")
 	            .selectAll("circle")
 	            .data(probabilities);
 
