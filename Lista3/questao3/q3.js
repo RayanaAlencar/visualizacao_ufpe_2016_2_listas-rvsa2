@@ -316,7 +316,8 @@
 
 }
 		function removeAcidentes(){
-			d3.select("body").select("svg.painel1").selectAll("circle").style("fill", "transparent");
+			console.log("pintei de transparent");
+			d3.select("body").select("svg.painel1").selectAll("circle").attr("fill", "transparent");
 			d3.select("body").select("svg.painel2").selectAll("rect").attr("fill", "transparent");
 			d3.select("body").select("svg.painel2").selectAll("text").attr("fill", "transparent");
 			d3.select("body").select("svg.painel2").selectAll("g").remove();
