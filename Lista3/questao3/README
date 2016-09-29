@@ -1,0 +1,4 @@
+Em todas as três visualizações é possível  clicar em cima das cores para gerar uma visualizações melhor dos dados.
+ 
+Para resolver essa questão eu tratei algumas coisas no csv de entrada como caracteres estranhos em palavras com acentuação e os tipos de classes que existiam que eram as mesmas mas escritos de formas diferentes, como por exemplo  o tipo Moto e Ciclomotor e  o tipo Motos e Ciclomotores. Por fim, os tipos de problemas que deixei foram : Atropelamento, Automóveis, Ciclistas, Ciclomotores, Colisoes, Motocicletas, Motos e Ciclomotores, Outros e Pedestres.	
+
