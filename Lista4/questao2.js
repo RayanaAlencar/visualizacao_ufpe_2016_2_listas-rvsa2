@@ -29,21 +29,23 @@ function histogram(arrayDeNumeros, esquerda, direita, numeroDeBins){
 	var maxCallback = ( pre, cur ) => Math.max( pre, cur );
 
 	var min = data.reduce(minCallback);
+	console.log("min ",min);
 	var max = data.reduce(maxCallback);
-
-
-	var largura = Math.round((max - min)/totalClass);
+	console.log("max ",max);
+	console.log("------------------> ",(max - min)/totalClass);
+	var largura = (Math.round(((max - min)/totalClass)*100)/100);
 	console.log("largura ",largura);
 	console.log("total de classes ", totalClass);
 	var range = calcRange(min,largura,totalClass);
+
 	function calcRange(min,largura,totalClass){
 		var range =[];
 		var x = min;
 		var y =0;
 		for( var i =0;i<totalClass;i++){
 			var obj = {};
-			obj.x = x;
-			obj.y = x+largura;
+			obj.x = parseFloat(x.toFixed(2));
+			obj.y = parseFloat((x+largura).toFixed(2));
 			range.push(obj);
 			x = obj.y;
 		}
@@ -75,11 +77,11 @@ function histogram(arrayDeNumeros, esquerda, direita, numeroDeBins){
 
 	frequencia = calFrequencia(range,data,data_length,frequencia);
 	console.log("frequencia" , frequencia);
-	plot(frequencia,totalClass,range);
+	plot(frequencia,totalClass,range,largura);
 
 }
 
-function plot(frequencia,classes,range){
+function plot(frequencia,classes,range,largura){
 	var xtickers = new Set();
 	for(var i =0;i<range.length;i++){
 		xtickers.add(range[i].x);
@@ -108,7 +110,7 @@ function plot(frequencia,classes,range){
 	var xScale = d3.scaleBand()
 				.domain(d3.range(range.length+1))
 				.rangeRound([0, w])
-				.padding(1.5);
+				.padding(1);
 
 	svg.append("g").attr("id","xAxis")
 					.attr("transform","translate(" + 0 +"," + yScale(0)+ ")");
@@ -137,16 +139,28 @@ function plot(frequencia,classes,range){
 				.attr("y", function(d) {
 					return yScale(d);
 				})
-				.attr("width",function(d){
-					return 185;
+				.attr("width",function(d,i){
+					var dif  = xtickers[i+1] - xtickers[i];
+					var a = xScale(xtickers[i+1]);
+					console.log("a ",a, " .......",xtickers[i+1]);
+					var b = xScale(xtickers[i]);
+					console.log("b ",b);
+					var c = a-b;
+					console.log("diff ",dif , " x scale ",c , " diff com xScale ",xScale(dif));
+					console.log("larguraaaaa ",xScale.bandwidth());
+					return xScale.bandwidth();
+
 				})
 				.attr("height", function(d) {
+
 					return h - yScale(d);
 				})
 				.attr("fill",function(d){
-					//return "blue";
-				 return "rgb(0, 0, " + (d * 10) + ")";
+					return "blue";
+				 //return "rgb(0, 0, " + (d * 10) + ")";
 				})
+				.attr("opacity",0.5)
+				.attr("stroke-wid");
 
 
 }
