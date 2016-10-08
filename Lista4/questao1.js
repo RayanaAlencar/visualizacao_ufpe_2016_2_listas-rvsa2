@@ -1,15 +1,19 @@
 var margin = {top: 10, right: 20, bottom: 10, left: 20};
-var w = 900 - margin.left - margin.right;
-var h = 900 - margin.top - margin.bottom;
+var w = 1000 - margin.left - margin.right;
+var h = 1000 - margin.top - margin.bottom;
 var meses = ["Janeiro","Fevereiro","Marco","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 var svg = 0;
 var xAxis = 0;
 var yAxis =0;
 var xScale = 0;
 var yScale = 0;
+var svg = 0;
+var ytickers = new Set();
 
 function init(data) {
-console.log("aqui ",data);
+
+console.log("Data ",data);
+
 var max = -151515151515150;
 var min = 5589624451155840;
 var array =[];
@@ -26,55 +30,70 @@ for(var i =1;i<13;i++){
 	}
 }
 
-console.log("max ",max, " min ",min);
-
 var xScale = d3.scaleBand()
 				.domain(d3.range(12))
 				.rangeRound([0, w])
-				.padding(0.5);
+				.padding(3.5);
     
 var yScale = d3.scaleLinear()
         .domain([min,max])
 		.range([h,0]);
 
-var svg = d3.select("body")
+
+  	svg = d3.select("body")
 			.append("svg")
 			.attr("width", w+margin.left + margin.right)
 			.attr("height", h+margin.bottom + margin.top)
 			.attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
 svg.append("g").attr("id","xAxis")
-				.attr("transform","translate(0," + h + ")");
+				.attr("transform","translate(" + 0 +"," + h + ")");
 
 svg.append("g").attr("id","yAxis").attr("transform","translate(" + (margin.left) + ",0)");
 
  var xAxis = d3.axisBottom(xScale).tickFormat(function(d) {return meses[d]; });	
+
  var xAxisGroup = d3.select("#xAxis")
 				.transition()
 				.call(xAxis);
 
-  var yAxis = d3.axisLeft(yScale).tickValues([0,max]);			  
+ var yAxis = d3.axisLeft(yScale).ticks(24);		
+
   var yAxisGroup = d3.select("#yAxis")
   					.transition()
   					.call(yAxis);	
 
+  
+
+  	for(var i =1;i<=12;i++){
+  		console.log(meses[i-1],":");
+  		boxPlot(data[i],min,max,i-1);
+  	}
+	
+	var labels = Array.from(ytickers);
+
+	labels = labels.sort(function(a, b) {
+				  return a - b;
+				});
+
+ var yAxis = d3.axisLeft(yScale).tickValues(labels);	
+
+  var yAxisGroup = d3.select("#yAxis")
+  					.transition()
+  					.call(yAxis);	
 }
 
 
-function boxPlot(data){
-
-
-data = data[1];
-console.log("data : ",data);
+function boxPlot(data,minE,maxE,indice){
 
 var data_length = data.length;
 
-var minCallback = ( pre, cur ) => Math.min( pre, cur );
-var maxCallback = ( pre, cur ) => Math.max( pre, cur );
 data = data.sort(function(a, b) {
   return a - b;
 });
+
 var min = data.reduce(minCallback);
+console.log("minimum ",min);
 var max = data.reduce(maxCallback);
 
 
@@ -91,48 +110,84 @@ k = Math.floor(k);
 var thirdQuartile =  data[k-1] + ((3*(data_length+1)/4) - k) * (data[k]-data[k-1]);
 console.log("third quartile ",thirdQuartile);
 
+console.log("maximum ",max);
+
+
+var xScale = d3.scaleBand()
+				.domain(d3.range(12))
+				.rangeRound([0, w])
+				.padding(3.5);
+    
+var yScale = d3.scaleLinear()
+        .domain([minE,maxE])
+		.range([h,0]);
+
+
+
+var aux = xScale(indice); 
+
 var line = svg.append("line")
-			.attr("x1",w/2)
+			.attr("x1",xScale(indice))
 			.attr("y1",yScale(min))
-			.attr("x2",w/2)
+			.attr("x2",xScale(indice))
 			.attr("y2",yScale(max))
 			.attr("stroke","black")
 			.attr("stroke-width","1.5");
 			
 var lineSup = svg.append("line")
-			.attr("x1",w/2-50)
+			.attr("x1",function(d){
+				return aux-25;
+			})
 			.attr("y1",yScale(max))
-			.attr("x2",w/2+50)
+			.attr("x2",function(d){
+				return aux+25;
+			})
 			.attr("y2",yScale(max))
 			.attr("stroke","black")
 			.attr("stroke-width","1.5");
-		
+
 var lineInf = svg.append("line")
-			.attr("x1",w/2-50)
+			.attr("x1",function(d){
+				return aux-25;
+			})
 			.attr("y1",yScale(min))
-			.attr("x2",w/2+50)
+			.attr("x2",function(d){
+				var aux = xScale(indice);
+				return aux+25;
+			})
 			.attr("y2",yScale(min))
 			.attr("stroke","black")
 			.attr("stroke-width","1.5");
 
-			
 var rect = svg.append("rect")
-			.attr("x",w/2-100)
+			.attr("x",function(d){
+				return aux-25;
+			})
 			.attr("y",yScale(thirdQuartile))
 			.attr("height",yScale(firstQuartile)-yScale(thirdQuartile))
-			.attr("width",200)
-			.attr("fill","none")
+			.attr("width",50)
+			.attr("fill","black")
+			.attr("opacity","0.5")
 			.attr("stroke","black");
-			
+
+		
 var line_med = svg.append("line")
-			.attr("x1",w/2-100)
+			.attr("x1",function(d){
+				return aux-25;
+			})
 			.attr("y1",yScale(secondQuartile))
-			.attr("x2",w/2+100)
+			.attr("x2",function(d){
+				return aux+25;
+			})
 			.attr("y2",yScale(secondQuartile))
 			.attr("stroke","black")
-			.attr("stroke-width","1.5");	
+			.attr("stroke-width","1.5");
 
-
+	ytickers.add(min);
+	ytickers.add(max);
+/*	ytickers.push(firstQuartile);
+	ytickers.push(secondQuartile);
+	ytickers.push(thirdQuartile);*/
 
 }
 
@@ -161,5 +216,10 @@ function entrada(ano,tipo){
 	
 	}
 	init(Meses);
+
 	//boxPlot(Meses);
 }
+
+var minCallback = ( pre, cur ) => Math.min( pre, cur );
+var maxCallback = ( pre, cur ) => Math.max( pre, cur );
+	
