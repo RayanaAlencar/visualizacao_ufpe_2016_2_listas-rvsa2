@@ -32,7 +32,7 @@ function histogram(arrayDeNumeros, esquerda, direita, numeroDeBins){
 	console.log("min ",min);
 	var max = data.reduce(maxCallback);
 	console.log("max ",max);
-	console.log("------------------> ",(max - min)/totalClass);
+	//console.log("------------------> ",(max - min)/totalClass);
 	var largura = (Math.round(((max - min)/totalClass)*100)/100);
 	console.log("largura ",largura);
 	console.log("total de classes ", totalClass);
@@ -77,11 +77,11 @@ function histogram(arrayDeNumeros, esquerda, direita, numeroDeBins){
 
 	frequencia = calFrequencia(range,data,data_length,frequencia);
 	console.log("frequencia" , frequencia);
-	plot(frequencia,totalClass,range,largura);
+	plot(data,frequencia,totalClass,range,largura,totalClass);
 
 }
 
-function plot(frequencia,classes,range,largura){
+function plot(data,frequencia,classes,range,largura,totalClass){
 	var xtickers = new Set();
 	for(var i =0;i<range.length;i++){
 		xtickers.add(range[i].x);
@@ -107,17 +107,17 @@ function plot(frequencia,classes,range,largura){
 	    .domain([minD,max+5])
 		.range([h,0]);
 
-	var xScale = d3.scaleBand()
-				.domain(d3.range(range.length+1))
-				.rangeRound([0, w])
-				.padding(1);
-
+	var xScale = d3.scaleQuantile()
+				.domain(data)
+				.range([0,totalClass-1]);
+	
+	console.log("------------------------> ",xScale(0.4) );
 	svg.append("g").attr("id","xAxis")
 					.attr("transform","translate(" + 0 +"," + yScale(0)+ ")");
 
 	svg.append("g").attr("id","yAxis").attr("transform","translate(" + (margin.left) + ",0)");
 
-	var xAxis = d3.axisBottom(xScale).tickFormat(function(d){return xtickers[d];});	
+	var xAxis = d3.axisBottom(xScale);//tickFormat(function(d){return xtickers[d];});	
 
 	var xAxisGroup = d3.select("#xAxis")
 						.transition()
@@ -129,7 +129,7 @@ function plot(frequencia,classes,range,largura){
 						.transition()
 						.call(yAxis);	
 			
-			svg.selectAll("rect")
+		/*	svg.selectAll("rect")
 				.data(frequencia)
 				.enter()
 				.append("rect")
@@ -142,13 +142,13 @@ function plot(frequencia,classes,range,largura){
 				.attr("width",function(d,i){
 					var dif  = xtickers[i+1] - xtickers[i];
 					var a = xScale(xtickers[i+1]);
-					console.log("a ",a, " .......",xtickers[i+1]);
+					//console.log("a ",a, " .......",xtickers[i+1]);
 					var b = xScale(xtickers[i]);
-					console.log("b ",b);
+					//console.log("b ",b);
 					var c = a-b;
-					console.log("diff ",dif , " x scale ",c , " diff com xScale ",xScale(dif));
-					console.log("larguraaaaa ",xScale.bandwidth());
-					return xScale.bandwidth();
+					//console.log("diff ",dif , " x scale ",c , " diff com xScale ",xScale(dif));
+					//console.log("larguraaaaa ",xScale.bandwidth());
+					return 20;
 
 				})
 				.attr("height", function(d) {
@@ -160,7 +160,7 @@ function plot(frequencia,classes,range,largura){
 				 //return "rgb(0, 0, " + (d * 10) + ")";
 				})
 				.attr("opacity",0.5)
-				.attr("stroke-wid");
+				.attr("stroke-wid"); */
 
 
 }
