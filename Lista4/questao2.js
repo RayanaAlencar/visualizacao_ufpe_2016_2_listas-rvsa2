@@ -77,11 +77,11 @@ function histogram(arrayDeNumeros, esquerda, direita, numeroDeBins){
 
 	frequencia = calFrequencia(range,data,data_length,frequencia);
 	console.log("frequencia" , frequencia);
-	plot(frequencia,totalClass,range,largura);
+	plot(data,frequencia,totalClass,range,largura,totalClass);
 
 }
 
-function plot(frequencia,classes,range,largura){
+function plot(data,frequencia,classes,range,largura,totalClass){
 	var xtickers = new Set();
 	for(var i =0;i<range.length;i++){
 		xtickers.add(range[i].x);
@@ -107,17 +107,17 @@ function plot(frequencia,classes,range,largura){
 	    .domain([minD,max+5])
 		.range([h,0]);
 
-	var xScale = d3.scaleBand()
-				.domain(d3.range(range.length+1))
-				.rangeRound([0, w])
-				.padding(1);
-
+	var xScale = d3.scaleQuantile()
+				.domain(data)
+				.range([0,totalClass-1]);
+	
+	console.log("------------------------> ",xScale(0.4) );
 	svg.append("g").attr("id","xAxis")
 					.attr("transform","translate(" + 0 +"," + yScale(0)+ ")");
 
 	svg.append("g").attr("id","yAxis").attr("transform","translate(" + (margin.left) + ",0)");
 
-	var xAxis = d3.axisBottom(xScale).tickFormat(function(d){return xtickers[d];});	
+	var xAxis = d3.axisBottom(xScale);//tickFormat(function(d){return xtickers[d];});	
 
 	var xAxisGroup = d3.select("#xAxis")
 						.transition()
@@ -129,7 +129,7 @@ function plot(frequencia,classes,range,largura){
 						.transition()
 						.call(yAxis);	
 			
-			svg.selectAll("rect")
+		/*	svg.selectAll("rect")
 				.data(frequencia)
 				.enter()
 				.append("rect")
@@ -160,7 +160,7 @@ function plot(frequencia,classes,range,largura){
 				 //return "rgb(0, 0, " + (d * 10) + ")";
 				})
 				.attr("opacity",0.5)
-				.attr("stroke-wid");
+				.attr("stroke-wid"); */
 
 
 }
