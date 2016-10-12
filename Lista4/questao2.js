@@ -1,4 +1,4 @@
-var margin = {top: 20, right: 20, bottom: 20, left: 20};
+var margin = {top: 25, right: 25, bottom: 25, left: 25};
 var w = 900 - margin.left - margin.right;
 var h = 900 - margin.top - margin.bottom;
 
@@ -89,78 +89,104 @@ function plot(data,frequencia,classes,range,largura,totalClass){
 	} 
 
 	xtickers = Array.from(xtickers);
+	/*if(xtickers[0] !=0){
+		xtickers.push(0);
+		xtickers.sort(function(a, b) {
+	  return a - b;
+	});
+}*/
 
 	console.log("xtickers ", xtickers);
 	var min = frequencia.reduce(minCallback);
-	console.log("minimum ",min);
 	var max = frequencia.reduce(maxCallback);
-	console.log("max ",max);
 
 	var svg = d3.select("body").select("svg");
 	
-	var minD = min;
-	if(minD>0){
-		minD = 0;
-	}
 
 	var yScale = d3.scaleLinear()
-	    .domain([minD,max+5])
+	    .domain([0,max+1])
 		.range([h,0]);
+
+	var rangePlot = [];
+	for (var i =0;i<totalClass;i++){
+			rangePlot.push(i);
+	}
+
+	var xScale2 = d3.scaleBand()
+				.domain(xtickers)
+				.rangeRound([0, w])
+				.paddingInner(0);
 
 	var xScale = d3.scaleQuantile()
 				.domain(data)
-				.range([0,totalClass-1]);
+				.range(rangePlot);
+
+	var xScalePlot = d3.scaleLinear()
+		   			 .domain([0,xtickers.length-1])
+					 .range([0,w]);
 	
-	console.log("------------------------> ",xScale(0.4) );
 	svg.append("g").attr("id","xAxis")
-					.attr("transform","translate(" + 0 +"," + yScale(0)+ ")");
+					.attr("transform","translate(" + margin.top +"," + (h+margin.top)+ ")");
 
-	svg.append("g").attr("id","yAxis").attr("transform","translate(" + (margin.left) + ",0)");
 
-	var xAxis = d3.axisBottom(xScale);//tickFormat(function(d){return xtickers[d];});	
+	svg.append("g").attr("id","yAxis").attr("transform","translate(" + (margin.left) + ","+ margin.top+ ")");
 
-	var xAxisGroup = d3.select("#xAxis")
-						.transition()
-						.call(xAxis);
+	var frequenciaOrder=[];
+	for (var j =0;j<frequencia.length;j++){
+		 frequenciaOrder.push(frequencia[j]);
+	}
+	var frequenciaOrder = frequenciaOrder.sort(function(a, b) {
+	  return a - b;
+	});
+	if(frequenciaOrder[0]!= 0){
+		frequenciaOrder.push(0);
+	}
+	var frequenciaOrder = frequenciaOrder.sort(function(a, b) {
+	  return a - b;
+	});
 
-	var yAxis = d3.axisLeft(yScale).tickFormat(function(d,i){return frequencia[i];});		
+	var yAxis = d3.axisLeft(yScale);
+
+	var xAxis = d3.axisBottom(xScalePlot).tickFormat((function(d,i){return xtickers[i];}));	
 
 	var yAxisGroup = d3.select("#yAxis")
 						.transition()
 						.call(yAxis);	
+
+	var xAxisGroup = d3.select("#xAxis")
+						.transition()
+						.call(xAxis);
 			
-		/*	svg.selectAll("rect")
+
+
+	var rects =	svg.selectAll("rect")
 				.data(frequencia)
 				.enter()
 				.append("rect")
 				.attr("x", function(d, i) {
-					return xScale(i);
+					return xScalePlot(i);
 				})
-				.attr("y", function(d) {
+				.attr("y", function(d,i) {
 					return yScale(d);
 				})
 				.attr("width",function(d,i){
-					var dif  = xtickers[i+1] - xtickers[i];
-					var a = xScale(xtickers[i+1]);
-					//console.log("a ",a, " .......",xtickers[i+1]);
-					var b = xScale(xtickers[i]);
-					//console.log("b ",b);
-					var c = a-b;
-					//console.log("diff ",dif , " x scale ",c , " diff com xScale ",xScale(dif));
-					//console.log("larguraaaaa ",xScale.bandwidth());
-					return 20;//xScale.bandwidth();
-
+					var a = xScalePlot(i);
+					var b = xScalePlot(i+1);
+					var c = b-a;
+					return  c;
 				})
+				.attr("transform","translate(" + margin.left + "," + margin.top + ")")
 				.attr("height", function(d) {
-					console.log("altura ",d, yScale(d));
 					return h - yScale(d);
 				})
 				.attr("fill",function(d){
-					return "blue";
-				 //return "rgb(0, 0, " + (d * 10) + ")";
+					return "#00FF7F";
 				})
 				.attr("opacity",0.5)
-				.attr("stroke-wid"); */
+				.append("title")
+			   .text(function(d,i) {
+			         return d;
+			   });
 
 
 }

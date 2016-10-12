@@ -225,7 +225,7 @@ function entrada(ano,tipo){
 	}
 
 	for(var i =0;i<nbWeather.length;i++){
-		if(nbWeather[i].Year ===2015){
+		if(nbWeather[i].Year ===parseInt(ano)){
 			var j = (nbWeather[i].Month);
 			 Meses[j].push(nbWeather[i][tipo]);
 		}
