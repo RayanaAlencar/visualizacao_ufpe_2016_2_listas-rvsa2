@@ -112,15 +112,6 @@ function plot(data,frequencia,classes,range,largura,totalClass){
 			rangePlot.push(i);
 	}
 
-	var xScale2 = d3.scaleBand()
-				.domain(xtickers)
-				.rangeRound([0, w])
-				.paddingInner(0);
-
-	var xScale = d3.scaleQuantile()
-				.domain(data)
-				.range(rangePlot);
-
 	var xScalePlot = d3.scaleLinear()
 		   			 .domain([0,xtickers.length-1])
 					 .range([0,w]);
@@ -182,7 +173,9 @@ function plot(data,frequencia,classes,range,largura,totalClass){
 				.attr("fill",function(d){
 					return "#00FF7F";
 				})
-				.attr("opacity",0.5)
+				.attr("stroke-width", 1)
+			   	.attr("stroke","black")
+				.attr("opacity",0.8)
 				.append("title")
 			   .text(function(d,i) {
 			         return d;
