@@ -32,7 +32,7 @@ function histogram(arrayDeNumeros, esquerda, direita, numeroDeBins){
 	console.log("min ",min);
 	var max = data.reduce(maxCallback);
 	console.log("max ",max);
-	console.log("------------------> ",(max - min)/totalClass);
+	//console.log("------------------> ",(max - min)/totalClass);
 	var largura = (Math.round(((max - min)/totalClass)*100)/100);
 	console.log("largura ",largura);
 	console.log("total de classes ", totalClass);
@@ -123,7 +123,7 @@ function plot(frequencia,classes,range,largura){
 						.transition()
 						.call(xAxis);
 
-	var yAxis = d3.axisLeft(yScale);		
+	var yAxis = d3.axisLeft(yScale).tickFormat(function(d,i){return frequencia[i];});		
 
 	var yAxisGroup = d3.select("#yAxis")
 						.transition()
@@ -142,17 +142,17 @@ function plot(frequencia,classes,range,largura){
 				.attr("width",function(d,i){
 					var dif  = xtickers[i+1] - xtickers[i];
 					var a = xScale(xtickers[i+1]);
-					console.log("a ",a, " .......",xtickers[i+1]);
+					//console.log("a ",a, " .......",xtickers[i+1]);
 					var b = xScale(xtickers[i]);
-					console.log("b ",b);
+					//console.log("b ",b);
 					var c = a-b;
-					console.log("diff ",dif , " x scale ",c , " diff com xScale ",xScale(dif));
-					console.log("larguraaaaa ",xScale.bandwidth());
-					return xScale.bandwidth();
+					//console.log("diff ",dif , " x scale ",c , " diff com xScale ",xScale(dif));
+					//console.log("larguraaaaa ",xScale.bandwidth());
+					return 20;//xScale.bandwidth();
 
 				})
 				.attr("height", function(d) {
-
+					console.log("altura ",d, yScale(d));
 					return h - yScale(d);
 				})
 				.attr("fill",function(d){
