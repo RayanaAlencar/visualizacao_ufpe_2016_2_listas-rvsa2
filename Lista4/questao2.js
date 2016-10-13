@@ -89,12 +89,6 @@ function plot(data,frequencia,classes,range,largura,totalClass){
 	} 
 
 	xtickers = Array.from(xtickers);
-	/*if(xtickers[0] !=0){
-		xtickers.push(0);
-		xtickers.sort(function(a, b) {
-	  return a - b;
-	});
-}*/
 
 	console.log("xtickers ", xtickers);
 	var min = frequencia.reduce(minCallback);
@@ -149,7 +143,7 @@ function plot(data,frequencia,classes,range,largura,totalClass){
 						.call(xAxis);
 			
 
-
+	if(controle ===1){ 
 	var rects =	svg.selectAll("rect")
 				.data(frequencia)
 				.enter()
@@ -180,6 +174,63 @@ function plot(data,frequencia,classes,range,largura,totalClass){
 			   .text(function(d,i) {
 			         return d;
 			   });
+
+} else {
+
+		var circles= svg.selectAll("circle")
+					.data(entrada)
+					.enter()
+					.append("circle")
+					.attr("cx",function(d,i){
+						return xScalePlot(i);
+					})
+					.attr("cy",function(d,i){
+						return yScale(d);
+					})
+					.attr("r",2);
+
+				}
+}
+
+function gaus (u) {
+	var a = 1/Math.sqrt(2*Math.PI) ;
+	var c = -1/2 * Math.pow(u,2);
+	var b = Math.pow(Math.E,c);
+
+	return a*b;
+}
+
+function kernel(array,x,h){
+	var n = array.length;
+	var aux = 0;
+	var g = 0;
+	for (var j =0;j<n;j++){
+		g = gaus(((x-array[j])/h));
+		aux = aux+g; 
+	}
+
+	var b = 1/(n*h);
+
+	return b*aux;
+}
+
+function calclcarray(entrada,amplitude){
+
+	var svg = d3.select("body").select("svg");
+
+	var arrays =[];
+
+	for(var i =0;i<entrada.length;i++){
+		arrays.push(kernel(entrada,entrada[i],amplitude));
+	}
+	console.log("kernel ",arrays);
+
+	return arrays;
+}
+
+function kde(entrada,amplitude, esquerda, direita, numeroDeBins){
+
+	var arrayKernel = calclcarray(entrada,amplitude);
 
 
 }
