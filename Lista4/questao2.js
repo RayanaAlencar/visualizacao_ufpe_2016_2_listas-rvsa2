@@ -263,7 +263,7 @@ function kde(arrayDeNumeros,amplitude,esquerda, direita, numeroDeBins){
 	//console.log("???",entrada)
 	var arrayKernel = calclcarray(entrada,amplitude,arrayDeNumeros);
 
-	plot2(arrayKernel,frequencia,range,largura,totalClass,2);
+	plot2(arrayKernel,frequencia,range,largura,totalClass,controle);
 
 
 }
@@ -354,7 +354,7 @@ function plot2(data,frequencia,range,largura,totalClass,controle){
 					.attr("transform","translate(" + margin.left + "," + margin.top + ")");
 		}
 
-
+		
 		if(controle ==2){ //chamou os dois graficos entao arrumar o yScale para deixar mostrando a frequencia
 		var yScale = d3.scaleLinear()
 			    .domain([0,yMax])
@@ -366,7 +366,7 @@ function plot2(data,frequencia,range,largura,totalClass,controle){
 			var yAxisGroup = d3.select("#yAxis")
 								.transition()
 								.call(yAxis);	
-}
+		}
 }
 
 	function calFrequencia (range,data,data_length,frequencia){
